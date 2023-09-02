@@ -17,7 +17,7 @@ session_start();
 <body>
     <header>
     <div class="user-info">
-      <h2><?php echo isset($_SESSION['username']) ? "こんにちは！{$_SESSION['username']}さん" : "ゲストさん、こんにちは！";?></h2>
+      <h2><?php echo isset($_SESSION['name']) ? "こんにちは！{$_SESSION['name']}さん" : "ゲストさん、こんにちは！";?></h2>
     </div>
       <li><a href="/">ホーム</a></li>
       <li><a href="/about.php">マイページ</a></li>
