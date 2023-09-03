@@ -13,14 +13,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $stmt->fetch();
 
     if (empty($email) || empty($password)) {
-        $error_message = "パスワードとメールアドレスを入力してください";
-    } elseif ($user && $user['password'] === $password) {
-        $_SESSION['username'] = $user['name']; 
-        header('Location: index.php');
-        exit;
-    } else {
-        $error_message = "メールアドレスまたはパスワードが違います";
-    }
+      $error_message = "パスワードとメールアドレスを入力してください";
+  } elseif ($user && ($user['password'] === $password || password_verify($password, $user['password']))) {
+      $_SESSION['username'] = $user['name']; 
+      $_SESSION['user_id'] = $user['id'];
+      header('Location: index.php');
+      exit;
+  } else {
+      $error_message = "メールアドレスまたはパスワードが違います";
+  }
 }
 ?>
 
