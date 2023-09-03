@@ -9,7 +9,7 @@ $search_keyword = $_GET['search'] ?? '';
 $order = $_GET['order'] ?? 'new'; // デフォルトは新しい順
 
 // SQLクエリの準備
-$sql = "SELECT title, LEFT(contents, 15) AS short_contents, created_at FROM blogs";
+$sql = "SELECT id, title, LEFT(contents, 15) AS short_contents, created_at FROM blogs";
 $placeholders = [];
 
 if ($search_keyword) {
@@ -82,7 +82,7 @@ $blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <h2 class="text-lg font-semibold mt-2"><?php echo htmlspecialchars($blog['title']); ?></h2>
                 <p class="text-gray-600 mt-2"><?php echo htmlspecialchars($blog['short_contents']); ?>...</p>
                 <p class="text-gray-500 mt-2"><?php echo htmlspecialchars($blog['created_at']); ?></p>
-                <a href="detail.php?id=<?php echo htmlspecialchars($blog['id'] ?? ''); ?>" class="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">記事詳細へ</a>
+                <a href="detail.php?id=<?php echo htmlspecialchars($blog['id']); ?>" class="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">記事詳細へ</a>
             </div>
         </div>
         <?php endforeach; ?>
