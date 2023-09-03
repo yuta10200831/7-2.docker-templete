@@ -46,7 +46,7 @@ $blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
         <div>
             <a href="/" class="mx-2 text-blue-500 hover:text-blue-700">ホーム</a>
-            <a href="/about.php" class="mx-2 text-blue-500 hover:text-blue-700">マイページ</a>
+            <a href="/mypage.php" class="mx-2 text-blue-500 hover:text-blue-700">マイページ</a>
             <a href="/create.php" class="mx-2 text-blue-500 hover:text-blue-700">新規投稿</a>
             <?php if (isset($_SESSION["username"])): ?>
                 <a href="logout.php" class="mx-2 text-blue-500 hover:text-blue-700">ログアウト</a>
@@ -58,7 +58,7 @@ $blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </header>
 
 <main class="container mx-auto mt-10">
-    <h1 class="text-3xl font-bold mb-5">ブログ一覧</h1>
+    <h1 class="text-3xl font-bold mb-5 text-green-500">blog</h1>
 
     <!-- 検索バーと並び順ボタンをフォームで囲む -->
     <form method="GET" action="index.php">
