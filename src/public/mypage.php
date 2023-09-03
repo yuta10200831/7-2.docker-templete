@@ -10,7 +10,7 @@ if (!isset($_SESSION['username'])) {
 $user_id = $_SESSION['user_id'];
 
 $pdo = new PDO('mysql:host=mysql; dbname=blog; charset=utf8', 'root', 'password');
-$stmt = $pdo->prepare("SELECT * FROM blogs WHERE user_id = ?");
+$stmt = $pdo->prepare("SELECT * FROM blogs WHERE user_id = ? ORDER BY created_at DESC");
 $stmt->execute([$user_id]);
 $my_blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -50,6 +50,7 @@ $my_blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="bg-white rounded-lg shadow p-4">
                 <div class="p-4">
                     <h2 class="text-lg font-semibold mt-2"><?php echo htmlspecialchars($blog['title']); ?></h2>
+                    <p class="text-gray-500 mt-2"><?php echo htmlspecialchars($blog['created_at']); ?></p>
                     <p class="text-gray-600 mt-2"><?php echo htmlspecialchars(mb_substr($blog['contents'], 0, 15)) . (mb_strlen($blog['contents']) > 15 ? '...' : ''); ?></p>
                     <a href="detail.php?id=<?php echo htmlspecialchars($blog['id'] ?? ''); ?>" class="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">記事詳細へ</a>
                 </div>
