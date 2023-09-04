@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $pdo = new PDO('mysql:host=mysql; dbname=blog; charset=utf8', 'root', 'password');
         $stmt = $pdo->prepare("INSERT INTO blogs (title, contents, user_id) VALUES (?, ?, ?)");
         $stmt->execute([$title, $contents, $user_id]);
-        header("Location: index.php");
+        header("Location: mypage.php");
         exit;
     }
 }
