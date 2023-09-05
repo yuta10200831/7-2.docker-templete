@@ -28,7 +28,7 @@ session_start();
         <li><a href="logout.php">ログアウト</a></li>
       <?php else: ?>
         <!-- ログインしていない時のボタン -->
-        <li><a href="login.php">ログイン</a></li>
+        <li><a href="user/signin.php">ログイン</a></li>
       <?php endif; ?>
     </header>
 
