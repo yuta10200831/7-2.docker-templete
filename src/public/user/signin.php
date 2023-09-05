@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   } elseif ($user && ($user['password'] === $password || password_verify($password, $user['password']))) {
       $_SESSION['username'] = $user['name']; 
       $_SESSION['user_id'] = $user['id'];
-      header('Location: index.php');
+      header('Location: /index.php');
       exit;
   } else {
       $error_message = "メールアドレスまたはパスワードが違います";
@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 
-<form action="login.php" method="post">
+<form action="signin.php" method="post">
     <?php if ($error_message): ?>
         <p style="color: red;"><?php echo $error_message; ?></p>
     <?php endif; ?>
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     パスワード: <input type="password" name="password"><br>
     <input type="submit" value="ログイン">
 </form>
-<a href="register.php">アカウントを作る</a>
+<a href="signup.php">アカウントを作る</a>
 
 </body>
 </html>
