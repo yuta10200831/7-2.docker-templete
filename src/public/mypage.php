@@ -1,9 +1,8 @@
 <?php
 session_start();
 
-// ログインチェック
-if (!isset($_SESSION['username'])) {
-    header('Location: login.php');
+if (!isset($_SESSION['user_id'])) {
+    header('Location: user/signin.php');
     exit;
 }
 
