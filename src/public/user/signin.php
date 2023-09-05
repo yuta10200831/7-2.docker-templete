@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 
-<form action="login.php" method="post">
+<form action="/index.php" method="post">
     <?php if ($error_message): ?>
         <p style="color: red;"><?php echo $error_message; ?></p>
     <?php endif; ?>
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     パスワード: <input type="password" name="password"><br>
     <input type="submit" value="ログイン">
 </form>
-<a href="register.php">アカウントを作る</a>
+<a href="signup.php">アカウントを作る</a>
 
 </body>
 </html>

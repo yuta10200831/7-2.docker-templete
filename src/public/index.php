@@ -24,10 +24,10 @@ session_start();
       <div class="button-container">
       <?php if (isset($_SESSION["username"])): ?>
         <!-- ログインしている時のボタン -->
-        <li><a href="logout.php">ログアウト</a></li>
+        <li><a href="lougout.php">ログアウト</a></li>
       <?php else: ?>
         <!-- ログインしていない時のボタン -->
-        <li><a href="login.php">ログイン</a></li>
+        <li><a href="user/signin.php">ログイン</a></li>
       <?php endif; ?>
     </header>
 
