@@ -3,7 +3,7 @@ session_start();
 
 // ログインチェック
 if (!isset($_SESSION['username'])) {
-    header('Location: login.php');
+    header('Location: user/signin.php');
     exit;
 }
 
@@ -37,7 +37,7 @@ $my_blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php if (isset($_SESSION["username"])): ?>
                 <a href="logout.php" class="mx-2 text-blue-500 hover:text-blue-700">ログアウト</a>
             <?php else: ?>
-                <a href="login.php" class="mx-2 text-blue-500 hover:text-blue-700">ログイン</a>
+                <a href="user/signin.php" class="mx-2 text-blue-500 hover:text-blue-700">ログイン</a>
             <?php endif; ?>
         </div>
     </div>

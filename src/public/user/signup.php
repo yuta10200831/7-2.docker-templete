@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
         $stmt->execute([$username, $email, $password]);
-        header('Location: login.php');
+        header('Location: signin.php');
         exit;
     }
 }
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>アカウント作成</title>
 </head>
 <body>
-<form action="register.php" method="post">
+<form action="signup.php" method="post">
     <?php if ($message) echo "<p style='color:red;'>$message</p>"; ?>
     ユーザー名: <input type="text" name="username"><br>
     Email: <input type="email" name="email"><br>
@@ -46,6 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     パスワードの確認: <input type="password" name="confirmPassword"><br>
     <input type="submit" value="アカウント作成">
 </form>
-<a href="login.php">ログイン画面へ</a>
+<a href="signin.php">ログイン画面へ</a>
 </body>
 </html>
