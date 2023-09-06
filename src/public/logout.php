@@ -13,6 +13,6 @@ if (isset($_COOKIE[session_name()])) {
 session_destroy();
 
 // ログインページやトップページへリダイレクト
-header('Location: login.php');
+header('Location: user/signin.php');
 exit;
 ?>
