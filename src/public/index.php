@@ -21,7 +21,7 @@ session_start();
     </div>
       <li><a href="/">ホーム</a></li>
       <li><a href="/about.php">マイページ</a></li>
-      <li><a href="/create.php">新規投稿</a></li>
+      <li><a href="create.php">新規投稿</a></li>
       <div class="button-container">
       <?php if (isset($_SESSION["username"])): ?>
         <!-- ログインしている時のボタン -->

@@ -3,7 +3,7 @@ session_start();
 
 // ログインチェック
 if (!isset($_SESSION['username'])) {
-    header('Location: login.php');
+    header('Location: user/signin.php');
     exit;
 }
 
@@ -12,24 +12,10 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: create.php');
     exit;
 }
-$user_id = $_SESSION['user_id'];
 
-$error_message = "";
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $title = $_POST['title'] ?? '';
-    $contents = $_POST['contents'] ?? '';
-
-    if (empty($title) || empty($contents)) {
-        $error_message = "タイトルか内容の入力がありません";
-    } else {
-        $pdo = new PDO('mysql:host=mysql; dbname=blog; charset=utf8', 'root', 'password');
-        $stmt = $pdo->prepare("INSERT INTO blogs (title, contents, user_id) VALUES (?, ?, ?)");
-        $stmt->execute([$title, $contents, $user_id]);
-        header("Location: index.php");
-        exit;
-    }
-}
+// エラーメッセージの取得
+$error_message = $_SESSION['error'] ?? '';
+unset($_SESSION['error']); // エラーメッセージを表示した後にセッションから削除
 ?>
 
 <!DOCTYPE html>
@@ -41,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
 
 <h2>新規投稿</h2>
-<form action="create.php" method="post">
+<form action="post/store.php" method="post">
     <?php if ($error_message): ?>
         <p style="color: red;"><?php echo $error_message; ?></p>
     <?php endif; ?>
