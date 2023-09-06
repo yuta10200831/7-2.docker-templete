@@ -1,25 +1,29 @@
 <?php
 session_start();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-    $pdo = new PDO('mysql:host=mysql; dbname=your_db_name; charset=utf8', 'root', 'password');
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
-    $stmt->execute([$username]);
-    $user = $stmt->fetch();
-
-    if ($user && $user['password'] === $password) {
-        $_SESSION['username'] = $username;
-        header('Location: index.php');
-        exit;
-    }
-}
+$error_message = $_SESSION['error'] ?? '';
+unset($_SESSION['error']);  // エラーメッセージを表示した後にセッションから削除
 ?>
 
-<form action="login.php" method="post">
-    ユーザー名: <input type="text" name="username"><br>
-    パスワード: <input type="password" name="password"><br>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ログイン</title>
+</head>
+<body>
+
+<h2>ログイン</h2>
+
+<form action="signin_complete.php" method="post">
+    <?php if ($error_message): ?>
+        <p style="color: red;"><?php echo $error_message; ?></p>
+    <?php endif; ?>
+    <input type="text" name="email" placeholder="Email"><br>
+    <input type="password" name="password" placeholder="Password"><br>
     <input type="submit" value="ログイン">
 </form>
-<a href="register.php">アカウントを作る</a>
+<a href="signup.php">アカウントを作る</a>
+
+</body>
+</html>

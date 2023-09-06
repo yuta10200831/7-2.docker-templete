@@ -1,47 +1,24 @@
-<?php
-session_start();
-
-$error_message = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'] ?? '';
-    $password = $_POST['password'] ?? '';
-
-    $pdo = new PDO('mysql:host=mysql; dbname=blog; charset=utf8', 'root', 'password');
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
-    $stmt->execute([$email]);
-    $user = $stmt->fetch();
-
-    if (empty($email) || empty($password)) {
-      $error_message = "パスワードとメールアドレスを入力してください";
-  } elseif ($user && ($user['password'] === $password || password_verify($password, $user['password']))) {
-      $_SESSION['username'] = $user['name']; 
-      $_SESSION['user_id'] = $user['id'];
-      header('Location: index.php');
-      exit;
-  } else {
-      $error_message = "メールアドレスまたはパスワードが違います";
-  }
-}
-?>
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>ログイン</title>
+    <title>新規登録</title>
 </head>
 <body>
 
-<form action="login.php" method="post">
-    <?php if ($error_message): ?>
-        <p style="color: red;"><?php echo $error_message; ?></p>
+<h2>会員登録</h2>
+
+<form action="signup_complete.php" method="post">
+    <?php if (isset($_GET['error']) && $_GET['error']): ?>
+        <p style="color: red;"><?php echo htmlspecialchars($_GET['error']); ?></p>
     <?php endif; ?>
-    Email: <input type="text" name="email"><br>
-    パスワード: <input type="password" name="password"><br>
-    <input type="submit" value="ログイン">
+    <input type="text" name="name" placeholder="User name"><br>
+    <input type="text" name="email" placeholder="Email"><br>
+    <input type="password" name="password" placeholder="Password"><br>
+    <input type="password" name="confirm_password" placeholder="Password確認"><br>
+    <input type="submit" value="アカウント作成">
 </form>
-<a href="register.php">アカウントを作る</a>
+<a href="signin.php">ログイン画面へ</a>
 
 </body>
 </html>
