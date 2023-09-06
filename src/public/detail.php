@@ -14,25 +14,8 @@ if (!$blog) {
     exit;
 }
 
-$error_message = ''; // エラーメッセージの初期化
-
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['user_id'])) {
-    $comment = $_POST['comments'] ?? '';
-
-    if (empty($comment)) {
-        $error_message = 'コメントを入力してください。';
-    } else {
-        // 現在のユーザーの名前を取得
-        $userStmt = $pdo->prepare("SELECT name FROM users WHERE id = ?");
-        $userStmt->execute([$_SESSION['user_id']]);
-        $user = $userStmt->fetch(PDO::FETCH_ASSOC);
-        $commenter_name = $user['name'] ?? 'Unknown'; // 名前が取得できなかった場合のデフォルト値
-
-        // commentsテーブルにデータを挿入
-        $stmt = $pdo->prepare("INSERT INTO comments (blog_id, user_id, comments, commenter_name) VALUES (?, ?, ?, ?)");
-        $stmt->execute([$blog_id, $_SESSION['user_id'], $comment, $commenter_name]);
-    }
-}
+$error_message = $_SESSION['error'] ?? ''; 
+unset($_SESSION['error']); 
 
 $stmt = $pdo->prepare("SELECT * FROM comments WHERE blog_id = ? ORDER BY created_at DESC");
 $stmt->execute([$blog_id]);
@@ -70,9 +53,8 @@ $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
           </div>
         <?php endif; ?>
 
-
             <?php if (isset($_SESSION['user_id'])): ?>
-            <form action="detail.php?id=<?php echo $blog_id; ?>" method="post" class="mb-6">
+            <form action="comment/store.php?id=<?php echo $blog_id; ?>" method="post" class="mb-6">
               <textarea name="comments" rows="4" class="w-1/4 p-2 border border-blue-500 rounded"></textarea>
               <input type="submit" value="コメントする" class="mt-2 block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
             </form>
