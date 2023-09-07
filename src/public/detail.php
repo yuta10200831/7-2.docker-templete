@@ -7,6 +7,12 @@ if (!isset($_SESSION['username'])) {
   exit;
 }
 
+// ユーザーIDのチェック
+if (!isset($_SESSION['user_id'])) {
+  header('Location: user/signin.php');
+  exit;
+}
+
 $pdo = new PDO('mysql:host=mysql; dbname=blog; charset=utf8', 'root', 'password');
 
 $blog_id = $_GET['id'] ?? null;
