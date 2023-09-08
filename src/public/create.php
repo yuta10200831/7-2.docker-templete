@@ -1,12 +1,6 @@
 <?php
 session_start();
 
-// ログインチェック
-if (!isset($_SESSION['username'])) {
-    header('Location: user/signin.php');
-    exit;
-}
-
 // ユーザーIDのチェック
 if (!isset($_SESSION['user_id'])) {
     header('Location: create.php');
