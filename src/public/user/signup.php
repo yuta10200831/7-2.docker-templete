@@ -30,10 +30,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+    <title>新規登録</title>
+
     <title>アカウント作成</title>
 </head>
 <body>
@@ -67,5 +70,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <a href="signin.php">ログイン画面へ</a>
 
 </body>
-</html>
 </html>
