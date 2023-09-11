@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-
 $error_message = $_SESSION['error'] ?? '';
 unset($_SESSION['error']);  // エラーメッセージを表示した後にセッションから削除
 
@@ -59,4 +58,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 </body>
 </html>
-

@@ -13,6 +13,23 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+$error_message = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $title = $_POST['title'] ?? '';
+    $contents = $_POST['contents'] ?? '';
+
+    if (empty($title) || empty($contents)) {
+        $error_message = "タイトルか内容の入力がありません";
+    } else {
+        $pdo = new PDO('mysql:host=mysql; dbname=blog; charset=utf8', 'root', 'password');
+        $stmt = $pdo->prepare("INSERT INTO blogs (title, contents, user_id) VALUES (?, ?, ?)");
+        $stmt->execute([$title, $contents, $user_id]);
+        header("Location: mypage.php");
+        exit;
+    }
+}
+
 // エラーメッセージの取得
 $error_message = $_SESSION['error'] ?? '';
 unset($_SESSION['error']); // エラーメッセージを表示した後にセッションから削除
