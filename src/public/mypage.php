@@ -3,7 +3,8 @@ session_start();
 
 // ログインチェック
 if (!isset($_SESSION['username'])) {
-    header('Location: login.php');
+if (!isset($_SESSION['user_id'])) {
+    header('Location: user/signin.php');
     exit;
 }
 
@@ -37,7 +38,7 @@ $my_blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php if (isset($_SESSION["username"])): ?>
                 <a href="logout.php" class="mx-2 text-blue-500 hover:text-blue-700">ログアウト</a>
             <?php else: ?>
-                <a href="login.php" class="mx-2 text-blue-500 hover:text-blue-700">ログイン</a>
+                <a href="user/signin.php" class="mx-2 text-blue-500 hover:text-blue-700">ログイン</a>
             <?php endif; ?>
         </div>
     </div>
@@ -52,7 +53,7 @@ $my_blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <h2 class="text-lg font-semibold mt-2"><?php echo htmlspecialchars($blog['title']); ?></h2>
                     <p class="text-gray-500 mt-2"><?php echo htmlspecialchars($blog['created_at']); ?></p>
                     <p class="text-gray-600 mt-2"><?php echo htmlspecialchars(mb_substr($blog['contents'], 0, 15)) . (mb_strlen($blog['contents']) > 15 ? '...' : ''); ?></p>
-                    <a href="detail_my_page.php?id=<?php echo htmlspecialchars($blog['id'] ?? ''); ?>" class="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">記事詳細へ</a>
+                    <a href="myarticledetail.php?id=<?php echo htmlspecialchars($blog['id'] ?? ''); ?>" class="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">記事詳細へ</a>
                 </div>
             </div>
             <?php endforeach; ?>

@@ -1,6 +1,18 @@
 <?php
 session_start();
 
+// ログインチェック
+if (!isset($_SESSION['username'])) {
+    header('Location: login.php');
+    exit;
+}
+
+// ユーザーIDのチェック
+if (!isset($_SESSION['user_id'])) {
+    header('Location: create.php');
+    exit;
+}
+
 $pdo = new PDO('mysql:host=mysql; dbname=blog; charset=utf8', 'root', 'password');
 
 $blog_id = $_GET['id'] ?? null;

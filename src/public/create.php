@@ -3,7 +3,7 @@ session_start();
 
 // ログインチェック
 if (!isset($_SESSION['username'])) {
-    header('Location: login.php');
+    header('Location: user/signin.php');
     exit;
 }
 
@@ -12,7 +12,6 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: create.php');
     exit;
 }
-$user_id = $_SESSION['user_id'];
 
 $error_message = "";
 
@@ -30,6 +29,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 }
+
+// エラーメッセージの取得
+$error_message = $_SESSION['error'] ?? '';
+unset($_SESSION['error']); // エラーメッセージを表示した後にセッションから削除
 ?>
 
 <!DOCTYPE html>
@@ -41,7 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
 
 <h2>新規投稿</h2>
-<form action="create.php" method="post">
+<form action="post/store.php" method="post">
     <?php if ($error_message): ?>
         <p style="color: red;"><?php echo $error_message; ?></p>
     <?php endif; ?>
