@@ -1,9 +1,10 @@
 <?php
 session_start();
 
+
 $error_message = $_SESSION['error'] ?? '';
 unset($_SESSION['error']);  // エラーメッセージを表示した後にセッションから削除
-=======
+
 $error_message = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -43,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
     Email: <input type="text" name="email"><br>
     パスワード: <input type="password" name="password"><br>
+
 <h2>ログイン</h2>
 
 <form action="signin_complete.php" method="post">
