@@ -39,21 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>新規登録</title>
     <title>アカウント作成</title>
 </head>
-<body>
-<form action="signup.php" method="post">
-    <?php if ($message) echo "<p style='color:red;'>$message</p>"; ?>
-    ユーザー名: <input type="text" name="username"><br>
-    Email: <input type="email" name="email"><br>
-    パスワード: <input type="password" name="password"><br>
-    パスワードの確認: <input type="password" name="confirmPassword"><br>
-    <input type="submit" value="アカウント作成">
-</form>
-<a href="signin.php">ログイン画面へ</a>
-</body>
-</html>
-  <title>新規登録</title>
-</head>
-<body>
 
 <h2>会員登録</h2>
 
