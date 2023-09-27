@@ -59,8 +59,7 @@ final class SignUpInteractor
     public function handler(): SignUpOutput
     {
         $user = $this->findUser();
-        error_log(print_r($user, true));
-        
+
         if ($this->existsUser($user)) {
             return new SignUpOutput(false, self::ALLREADY_EXISTS_MESSAGE);
         }

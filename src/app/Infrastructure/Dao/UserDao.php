@@ -33,7 +33,6 @@ final class UserDao
                 'root',
                 'password'
             );
-
         } catch (PDOException $e) {
             exit('DB接続エラー:' . $e->getMessage());
         }

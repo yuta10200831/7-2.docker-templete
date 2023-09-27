@@ -18,25 +18,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!$username || !$email || !$password) {
         $message = "ユーザー名かEmailかパスワードの入力がありません。";
-    } elseif ($emailExists) {
-        $message = "すでに保存されているメールアドレスです";
-    } elseif ($password !== $confirmPassword) {
-        $message = "パスワードが一致していません。";
-    } else {
-        $stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
-        $stmt->execute([$username, $email, $password]);
-        header('Location: signin.php');
-        exit;
+        return;
     }
+
+    if ($emailExists) {
+        $message = "すでに保存されているメールアドレスです";
+        return;
+    }
+
+    if ($password !== $confirmPassword) {
+        $message = "パスワードが一致していません。";
+        return;
+    }
+
+    $stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
+    $stmt->execute([$username, $email, $password]) or die(print_r($stmt->errorInfo(), true));
+    header('Location: signin.php');
+    exit;
 }
+
 ?>
 
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-
-    <title>新規登録</title>
     <title>アカウント作成</title>
 </head>
 
