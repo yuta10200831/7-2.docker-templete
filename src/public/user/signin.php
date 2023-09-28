@@ -12,11 +12,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
     $stmt->execute([$email]);
     $user = $stmt->fetch();
-
+    
     if (empty($email) || empty($password)) {
       $error_message = "パスワードとメールアドレスを入力してください";
   } elseif ($user && ($user['password'] === $password || password_verify($password, $user['password']))) {
-      $_SESSION['username'] = $user['name']; 
+      $_SESSION['username'] = $user['name'];
       $_SESSION['user_id'] = $user['id'];
       header('Location: /index.php');
       exit;
