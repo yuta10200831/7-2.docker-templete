@@ -15,13 +15,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $interactor = new SignUpInteractor($input);
     $output = $interactor->handle();
 
-    if ($output->isSuccess()) {
-        header('Location: signin.php');
-        exit;
-    } else {
+    if (!$output->isSuccess()) {
         $_SESSION['errors'] = $output->message();
         $error_message = $_SESSION['errors'];
+        return;
     }
+
+    header('Location: signin.php');
+    exit;
 }
 ?>
 
