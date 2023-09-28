@@ -2,8 +2,6 @@
 session_start();
 
 $message = "";
-$error_message = is_array($_SESSION['errors']) ? implode('<br>', $_SESSION['errors']) : $_SESSION['errors'] ?? '';
-unset($_SESSION['errors']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
@@ -20,23 +18,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!$username || !$email || !$password) {
         $message = "ユーザー名かEmailかパスワードの入力がありません。";
-        return;
-    }
-
-    if ($emailExists) {
+    } elseif ($emailExists) {
         $message = "すでに保存されているメールアドレスです";
-        return;
-    }
-
-    if ($password !== $confirmPassword) {
+    } elseif ($password !== $confirmPassword) {
         $message = "パスワードが一致していません。";
-        return;
+    } else {
+        $stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
+        $stmt->execute([$username, $email, $password]);
+        header('Location: signin.php');
+        exit;
     }
-
-    $stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
-    $stmt->execute([$username, $email, $password]) or die(print_r($stmt->errorInfo(), true));
-    header('Location: signin.php');
-    exit;
 }
 ?>
 
@@ -44,24 +35,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+
+    <title>新規登録</title>
     <title>アカウント作成</title>
 </head>
 
-<body>
 <h2>会員登録</h2>
 
-<?php if ($error_message): ?>
-    <p style="color: red;"><?php echo $error_message; ?></p>
-<?php endif; ?>
-
 <form action="signup_complete.php" method="post">
+    <?php if (isset($_GET['error']) && $_GET['error']): ?>
+        <p style="color: red;"><?php echo htmlspecialchars($_GET['error']); ?></p>
+    <?php endif; ?>
     <input type="text" name="name" placeholder="User name"><br>
     <input type="text" name="email" placeholder="Email"><br>
     <input type="password" name="password" placeholder="Password"><br>
     <input type="password" name="confirm_password" placeholder="Password確認"><br>
     <input type="submit" value="アカウント作成">
 </form>
-
 <a href="signin.php">ログイン画面へ</a>
 
 </body>
