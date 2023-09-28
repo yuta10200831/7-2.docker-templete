@@ -1,8 +1,10 @@
 <?php
 session_start();
 
-$error_message = $_SESSION['errors'] ?? '';
-unset($_SESSION['errors']);
+$error_message = $_SESSION['error'] ?? '';
+unset($_SESSION['error']);  // エラーメッセージを表示した後にセッションから削除
+
+$error_message = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
