@@ -12,13 +12,16 @@ $email = filter_input(INPUT_POST, 'email');
 $password = filter_input(INPUT_POST, 'password');
 $confirmPassword = filter_input(INPUT_POST, 'confirm_password');
 
+session_start();
+
+if (empty($name)) {
+    $_SESSION['errors'][] = 'ユーザー名を入力してください';
+}
+if (empty($email)) {
+    $_SESSION['errors'][] = 'メールアドレスを入力してください';
+}
 
 try {
-    session_start();
-    // var_dump($name);
-    // var_dump($email);
-    // var_dump($password);
-    // var_dump($confirmPassword);
     if (empty($password) || empty($confirmPassword)) {
         throw new Exception('パスワードを入力してください');
     }
@@ -33,11 +36,10 @@ try {
     $useCase = new SignUpInteractor($useCaseInput);
     $useCaseOutput = $useCase->handler();
 
-    var_dump($name, $email, $password, $confirmPassword);
-
     if (!$useCaseOutput->isSuccess()) {
         throw new Exception($useCaseOutput->message());
     }
+
     $_SESSION['message'] = $useCaseOutput->message();
     Redirect::handler('./signin.php');
 } catch (Exception $e) {

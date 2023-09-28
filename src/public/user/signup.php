@@ -2,6 +2,8 @@
 session_start();
 
 $message = "";
+$error_message = is_array($_SESSION['errors']) ? implode('<br>', $_SESSION['errors']) : $_SESSION['errors'] ?? '';
+unset($_SESSION['errors']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
@@ -46,18 +48,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>アカウント作成</title>
 </head>
 
+<body>
 <h2>会員登録</h2>
 
+<?php if ($error_message): ?>
+    <p style="color: red;"><?php echo $error_message; ?></p>
+<?php endif; ?>
+
 <form action="signup_complete.php" method="post">
-    <?php if (isset($_GET['error']) && $_GET['error']): ?>
-        <p style="color: red;"><?php echo htmlspecialchars($_GET['error']); ?></p>
-    <?php endif; ?>
     <input type="text" name="name" placeholder="User name"><br>
     <input type="text" name="email" placeholder="Email"><br>
     <input type="password" name="password" placeholder="Password"><br>
     <input type="password" name="confirm_password" placeholder="Password確認"><br>
     <input type="submit" value="アカウント作成">
 </form>
+
 <a href="signin.php">ログイン画面へ</a>
 
 </body>
