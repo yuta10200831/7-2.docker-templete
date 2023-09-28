@@ -19,6 +19,7 @@ try {
     $useCaseInput = new SignInInput($userEmail, $inputPassword);
     $useCase = new SignInInteractor($useCaseInput);
     $useCaseOutput = $useCase->handler();
+    // var_dump($useCaseOutput);
 
     if (!$useCaseOutput->isSuccess()) {
         throw new Exception($useCaseOutput->message());

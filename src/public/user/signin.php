@@ -1,30 +1,28 @@
 <?php
 session_start();
 
-$error_message = $_SESSION['errors'] ?? '';
+$error_message = is_array($_SESSION['errors']) ? implode('<br>', $_SESSION['errors']) : $_SESSION['errors'] ?? '';
 unset($_SESSION['errors']);
 
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'] ?? '';
-    $password = $_POST['password'] ?? '';
+    $username = trim($_POST['username'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $password = trim($_POST['password'] ?? '');
+    $confirmPassword = trim($_POST['confirmPassword'] ?? '');
 
-    $pdo = new PDO('mysql:host=mysql; dbname=blog; charset=utf8', 'root', 'password');
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
-    $stmt->execute([$email]);
-    $user = $stmt->fetch();
-    
-    if (empty($email) || empty($password)) {
-      $error_message = "パスワードとメールアドレスを入力してください";
-  } elseif ($user && ($user['password'] === $password || password_verify($password, $user['password']))) {
-      $_SESSION['username'] = $user['name'];
-      $_SESSION['user_id'] = $user['id'];
-      header('Location: /index.php');
-      exit;
-  } else {
-      $error_message = "メールアドレスまたはパスワードが違います";
-  }
+    $input = new SignUpInput($username, $email, $password, $confirmPassword);
+    $interactor = new SignUpInteractor($input);
+    $output = $interactor->handle();
+
+    if ($output->isSuccess()) {
+        header('Location: signin.php');
+        exit;
+    } else {
+        $_SESSION['errors'] = $output->message();
+        $error_message = $_SESSION['errors'];
+    }
 }
-
 ?>
 
 <!DOCTYPE html>
