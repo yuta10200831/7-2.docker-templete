@@ -26,6 +26,7 @@ if ($order === 'new') {
 $stmt = $pdo->prepare($sql);
 $stmt->execute($placeholders);
 $blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 
 <!DOCTYPE html>
@@ -42,13 +43,13 @@ $blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <header class="bg-white shadow p-4">
     <div class="container mx-auto flex justify-between items-center">
         <div>
-            <h2 class="text-xl font-semibold"><?php echo isset($_SESSION['username']) ? "こんにちは！{$_SESSION['username']}さん" : "ゲストさん、こんにちは！"; ?></h2>
+            <h2 class="text-xl font-semibold"><?php echo isset($_SESSION['user']['name']) ? "こんにちは！{$_SESSION['user']['name']}さん" : "ゲストさん、こんにちは！"; ?></h2>
         </div>
         <div>
             <a href="/" class="mx-2 text-blue-500 hover:text-blue-700">ホーム</a>
             <a href="/mypage.php" class="mx-2 text-blue-500 hover:text-blue-700">マイページ</a>
             <a href="/create.php" class="mx-2 text-blue-500 hover:text-blue-700">新規投稿</a>
-            <?php if (isset($_SESSION["username"])): ?>
+            <?php if (isset($_SESSION['user']['name'])): ?>
                 <a href="logout.php" class="mx-2 text-blue-500 hover:text-blue-700">ログアウト</a>
             <?php else: ?>
                 <a href="user/signin.php" class="mx-2 text-blue-500 hover:text-blue-700">ログイン</a>
