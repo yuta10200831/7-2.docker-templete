@@ -2,13 +2,13 @@
 session_start();
 
 // ログインチェック
-if (!isset($_SESSION['username'])) {
+if (!isset($_SESSION['user']['name'])) {
   header('Location: user/signin.php');
   exit;
 }
 
 // ユーザーIDのチェック
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['user']['id'])) {
   header('Location: user/signin.php');
   exit;
 }
@@ -26,8 +26,8 @@ if (!$blog) {
     exit;
 }
 
-$error_message = $_SESSION['error'] ?? ''; 
-unset($_SESSION['error']); 
+$error_message = $_SESSION['error'] ?? '';
+unset($_SESSION['error']);
 
 $stmt = $pdo->prepare("SELECT * FROM comments WHERE blog_id = ? ORDER BY created_at DESC");
 $stmt->execute([$blog_id]);
@@ -65,7 +65,7 @@ $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
           </div>
         <?php endif; ?>
 
-            <?php if (isset($_SESSION['user_id'])): ?>
+            <?php if (isset($_SESSION['user']['id'])): ?>
             <form action="comment/store.php?id=<?php echo $blog_id; ?>" method="post" class="mb-6">
               <textarea name="comments" rows="4" class="w-1/4 p-2 border border-blue-500 rounded"></textarea>
               <input type="submit" value="コメントする" class="mt-2 block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">

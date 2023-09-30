@@ -2,13 +2,13 @@
 session_start();
 
 // ログインチェック
-if (!isset($_SESSION['username'])) {
+if (!isset($_SESSION['user']['name'])) {
     header('Location: login.php');
     exit;
 }
 
 // ユーザーIDのチェック
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['user']['id'])) {
     header('Location: create.php');
     exit;
 }
