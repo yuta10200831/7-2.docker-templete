@@ -36,4 +36,13 @@ class Blog {
     public function getCreatedAt() {
         return $this->createdAt;
     }
+
+    // セッターメソッドを追加
+    public function setTitle(string $title): void {
+        $this->title = $title;
+    }
+
+    public function setContents(string $contents): void {
+        $this->contents = $contents;
+    }
 }
