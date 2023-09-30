@@ -1,44 +1,22 @@
 <?php
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+use App\Infrastructure\Dao\PostRepositoryMySQLImpl;
+use App\UseCase\UseCaseInput\CreatePostInputData;
+use App\UseCase\UseCaseInteractor\CreatePostInteractor;
+
+$pdo = new PDO('mysql:host=mysql; dbname=blog; charset=utf8', 'root', 'password');
+
+$postRepository = new PostRepositoryMySQLImpl($pdo);
+$createPostInteractor = new CreatePostInteractor($postRepository);
+
 session_start();
 
-// ログインチェック
-if (!isset($_SESSION['username'])) {
-    header('Location: user/signin.php');
-    exit;
-}
-
-// ユーザーIDのチェック
-if (!isset($_SESSION['user_id'])) {
-    header('Location: /create.php');
-    exit;
-}
-$user_id = $_SESSION['user_id'];
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $title = $_POST['title'] ?? '';
-    $contents = $_POST['contents'] ?? '';
-
-    if (empty($title) || empty($contents)) {
-        $_SESSION['error'] = "タイトルか内容の入力がありません";
-        header('Location: /create.php');
-        exit;
-    } else {
-        $pdo = new PDO('mysql:host=mysql; dbname=blog; charset=utf8', 'root', 'password');
-        $stmt = $pdo->prepare("INSERT INTO blogs (title, contents, user_id) VALUES (?, ?, ?)");
-        $stmt->execute([$title, $contents, $user_id]);
-        // 後程mypageへ変更
-        header("Location: /index.php");
-        exit;
-    }
-} else {
-    // POSTリクエスト以外でこのページが呼び出された場合、create.phpにリダイレクトする。
-    header('Location: /create.php');
-    exit;
-}
-
-// ユーザーIDのチェック
-if (!isset($_SESSION['user_id'])) {
-    header('Location: /create.php');
+// user_id の確認
+$user_id = $_SESSION['user']['id'] ?? null;
+if (empty($user_id)) {
+    $_SESSION['error'] = "ログインが必要です";
+    header('Location: /user/signin.php');  // ログインページにリダイレクト
     exit;
 }
 
@@ -49,18 +27,20 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 
 $title = $_POST['title'] ?? '';
 $contents = $_POST['contents'] ?? '';
-$user_id = $_SESSION['user_id'];
 
 if (empty($title) || empty($contents)) {
-    $_SESSION['error'] = "タイトルか内容の入力がありません";
+    $_SESSION['error'] = "タイトル又は内容が入力されていません";
     header('Location: /create.php');
     exit;
 }
 
-$pdo = new PDO('mysql:host=mysql; dbname=blog; charset=utf8', 'root', 'password');
-$stmt = $pdo->prepare("INSERT INTO blogs (title, contents, user_id) VALUES (?, ?, ?)");
-$stmt->execute([$title, $contents, $user_id]);
-
-// 後程mypageへ変更
-header("Location: /index.php");
-exit;
+try {
+    $inputData = new CreatePostInputData($title, $contents, $user_id);
+    $createPostInteractor->handle($inputData);
+    header("Location: /index.php");
+    exit;
+} catch (Exception $e) {
+    $_SESSION['error'] = $e->getMessage();
+    header('Location: /create.php');
+    exit;
+}
