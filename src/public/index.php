@@ -1,31 +1,18 @@
 <?php
+require_once __DIR__ . '/../vendor/autoload.php';
+
 session_start();
 
-// データベースに接続
+use App\Infrastructure\Dao\BlogRepositoryMySQLImpl;
+
 $pdo = new PDO('mysql:host=mysql; dbname=blog; charset=utf8', 'root', 'password');
+$blogRepo = new BlogRepositoryMySQLImpl($pdo);
 
-// 検索キーワードと並び順の初期値を設定
 $search_keyword = $_GET['search'] ?? '';
-$order = $_GET['order'] ?? 'new'; // デフォルトは新しい順
+$order = $_GET['order'] ?? 'new';
 
-// SQLクエリの準備
-$sql = "SELECT id, title, LEFT(contents, 15) AS short_contents, created_at FROM blogs";
-$placeholders = [];
+$blogs = $blogRepo->findAllWithQuery($search_keyword, $order);
 
-if ($search_keyword) {
-    $sql .= " WHERE title LIKE :search OR contents LIKE :search";
-    $placeholders[':search'] = '%' . $search_keyword . '%';
-}
-
-if ($order === 'new') {
-    $sql .= " ORDER BY created_at DESC";
-} elseif ($order === 'old') {
-    $sql .= " ORDER BY created_at ASC";
-}
-
-$stmt = $pdo->prepare($sql);
-$stmt->execute($placeholders);
-$blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
