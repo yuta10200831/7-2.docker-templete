@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../vendor/autoload.php';
+
 session_start();
 
 // ログインチェック
@@ -7,14 +9,15 @@ if (!isset($_SESSION['user']['id'])) {
     exit;
 }
 
-$user_id = ($_SESSION['user']['id']);
-
 $pdo = new PDO('mysql:host=mysql; dbname=blog; charset=utf8', 'root', 'password');
-$stmt = $pdo->prepare("SELECT * FROM blogs WHERE user_id = ? ORDER BY created_at DESC");
-$stmt->execute([$user_id]);
-$my_blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-?>
 
+$user_id = $_SESSION['user']['id'];
+
+$blogRepository = new \App\Infrastructure\Dao\BlogRepositoryMySQLImpl($pdo);
+
+$my_blogs = $blogRepository->findByUserId($user_id);
+
+?>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -24,7 +27,7 @@ $my_blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <title>マイページ</title>
 </head>
 <body class="bg-gray-100">
-<!-- ヘッダーの表示 -->
+<!-- ヘッダー -->
 <header class="bg-white shadow p-4">
     <div class="container mx-auto flex justify-between items-center">
         <div>
@@ -42,21 +45,22 @@ $my_blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
 </header>
-    <main class="container mx-auto mt-10">
-        <h2 class="text-2xl font-semibold mb-6 text-green-400">マイページ</h2>
-        <a href="/create.php" class="mx-2 text-blue-500 hover:text-blue-700">新規投稿</a>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <?php foreach ($my_blogs as $blog): ?>
-            <div class="bg-white rounded-lg shadow p-4">
-                <div class="p-4">
-                    <h2 class="text-lg font-semibold mt-2"><?php echo htmlspecialchars($blog['title']); ?></h2>
-                    <p class="text-gray-500 mt-2"><?php echo htmlspecialchars($blog['created_at']); ?></p>
-                    <p class="text-gray-600 mt-2"><?php echo htmlspecialchars(mb_substr($blog['contents'], 0, 15)) . (mb_strlen($blog['contents']) > 15 ? '...' : ''); ?></p>
-                    <a href="myarticledetail.php?id=<?php echo htmlspecialchars($blog['id'] ?? ''); ?>" class="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">記事詳細へ</a>
-                </div>
+<!-- メインコンテンツ -->
+<main class="container mx-auto mt-10">
+    <h2 class="text-2xl font-semibold mb-6 text-green-400">マイページ</h2>
+    <a href="/create.php" class="mx-2 text-blue-500 hover:text-blue-700">新規投稿</a>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <?php foreach ($my_blogs as $blog): ?>
+        <div class="bg-white rounded-lg shadow p-4">
+            <div class="p-4">
+                <h2 class="text-lg font-semibold mt-2"><?php echo htmlspecialchars($blog->getTitle()); ?></h2>
+                <p class="text-gray-500 mt-2"><?php echo htmlspecialchars($blog->getCreatedAt()); ?></p>
+                <p class="text-gray-600 mt-2"><?php echo htmlspecialchars(mb_substr($blog->getContents(), 0, 15)) . (mb_strlen($blog->getContents()) > 15 ? '...' : ''); ?></p>
+                <a href="myarticledetail.php?id=<?php echo htmlspecialchars($blog->getId()); ?>" class="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">記事詳細へ</a>
             </div>
-            <?php endforeach; ?>
         </div>
-    </main>
+        <?php endforeach; ?>
+    </div>
+</main>
 </body>
 </html>
