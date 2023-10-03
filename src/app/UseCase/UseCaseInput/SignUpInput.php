@@ -1,69 +1,49 @@
 <?php
 
 namespace App\UseCase\UseCaseInput;
-require_once __DIR__ . '/../../../vendor/autoload.php';
 use App\Domain\ValueObject\User\UserName;
 use App\Domain\ValueObject\Email;
 use App\Domain\ValueObject\InputPassword;
+use App\Domain\ValueObject\Age;
 
-/**
- * ユーザー登録ユースケースの入力値
- */
 final class SignUpInput
 {
-    /**
-     * @var UserName
-     */
     private $name;
-
-    /**
-     * @var Email
-     */
     private $email;
-
-    /**
-     * @var InputPassword
-     */
     private $password;
+    private $age;
 
-    /**
-     * コンストラクタ
-     *
-     * @param UserName $name
-     * @param Email $email
-     * @param InputPassword $password
-     */
     public function __construct(
         UserName $name,
         Email $email,
-        InputPassword $password
+        InputPassword $password,
+        Age $age
     ) {
+
         $this->name = $name;
         $this->email = $email;
         $this->password = $password;
+        $this->age = $age;
     }
 
-    /**
-     * @return UserName
-     */
     public function name(): UserName
     {
         return $this->name;
     }
 
-    /**
-     * @return Email
-     */
     public function email(): Email
     {
         return $this->email;
     }
 
-    /**
-     * @return InputPassword
-     */
     public function password(): InputPassword
     {
         return $this->password;
     }
+
+    public function age(): Age
+    {
+        return $this->age;
+    }
 }
+

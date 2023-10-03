@@ -27,6 +27,8 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($placeholders);
 $blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+$memberStatus = $_SESSION['user']['memberStatus'];
+
 ?>
 
 <!DOCTYPE html>
@@ -44,6 +46,7 @@ $blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div class="container mx-auto flex justify-between items-center">
         <div>
             <h2 class="text-xl font-semibold"><?php echo isset($_SESSION['user']['name']) ? "こんにちは！{$_SESSION['user']['name']}さん" : "ゲストさん、こんにちは！"; ?></h2>
+            <p><?php echo $memberStatus; ?></p>
         </div>
         <div>
             <a href="/" class="mx-2 text-blue-500 hover:text-blue-700">ホーム</a>

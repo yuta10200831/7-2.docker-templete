@@ -8,6 +8,9 @@ use App\Domain\ValueObject\User\UserId;
 use App\Domain\ValueObject\User\UserName;
 use App\Domain\ValueObject\Email;
 use App\Domain\ValueObject\HashedPassword;
+use App\Domain\ValueObject\Age;
+use App\Domain\ValueObject\RegistrationDate;
+
 
 final class UserQueryServise
 {
@@ -25,14 +28,28 @@ final class UserQueryServise
     {
         $userMapper = $this->userDao->findByEmail($email);
 
-        return $this->notExistsUser($userMapper)
-            ? null
-            : new User(
-                new UserId($userMapper['id']),
-                new UserName($userMapper['name']),
-                new Email($userMapper['email']),
-                new HashedPassword($userMapper['password'])
-            );
+        if ($this->notExistsUser($userMapper)) {
+            return null;
+        }
+
+        $ageValue = isset($userMapper['age']) ? (int)$userMapper['age'] : null;
+
+        if ($ageValue === null) {
+            // nullのときの処理（例外を投げる、ログを出すなど）
+            throw new \Exception('Age is null');
+        }
+
+        $age = new Age($ageValue);
+        $registrationDate = new RegistrationDate($userMapper['registration_date']);
+
+        return new User(
+            new UserId($userMapper['id']),
+            new UserName($userMapper['name']),
+            new Email($userMapper['email']),
+            new HashedPassword($userMapper['password']),
+            $age,
+            $registrationDate
+        );
     }
 
     private function notExistsUser(?array $user): bool
