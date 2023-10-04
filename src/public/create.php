@@ -16,30 +16,9 @@ if (!$user_id) {
 
 $error_message = "";
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $title = $_POST['title'] ?? '';
-    $contents = $_POST['contents'] ?? '';
-
-    // タイトルと内容のどちらかが空ならエラー
-    if (empty($title) || empty($contents)) {
-        $error_message = "タイトルか内容の入力がありません";
-    } else {
-        // 保存処理
-        try {
-            $pdo = new PDO('mysql:host=mysql; dbname=blog; charset=utf8', 'root', 'password');
-            $stmt = $pdo->prepare("INSERT INTO blogs (title, contents, user_id) VALUES (?, ?, ?)");
-            $stmt->execute([$title, $contents, $user_id]);
-            header("Location: mypage.php");
-            exit;
-        } catch (Exception $e) {
-            $error_message = "保存に失敗しました。";
-        }
-    }
-}
-
 // エラーメッセージの取得
 $error_message = $_SESSION['error'] ?? '';
-unset($_SESSION['error']); // エラーメッセージを表示した後にセッションから削除
+unset($_SESSION['error']);
 ?>
 
 <!DOCTYPE html>
@@ -51,7 +30,7 @@ unset($_SESSION['error']); // エラーメッセージを表示した後にセ�
 <body>
 
 <h2>新規投稿</h2>
-<form action="post/store.php" method="post">
+<form action="/post/store.php" method="post">
     <?php if ($error_message): ?>
         <p style="color: red;"><?php echo $error_message; ?></p>
     <?php endif; ?>
