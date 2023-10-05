@@ -1,15 +1,25 @@
 <?php
+
 namespace App\Infrastructure\Dao;
 
 use App\Domain\Entity\Blog;
 use App\Adapter\Repository\BlogRepositoryInterface;
 use PDO;
+use PDOException;
 
 class BlogRepositoryMySQLImpl implements BlogRepositoryInterface {
     private $pdo;
 
-    public function __construct(PDO $pdo) {
-        $this->pdo = $pdo;
+    public function __construct() {
+        try {
+            $this->pdo = new PDO(
+                'mysql:dbname=blog;host=mysql;charset=utf8',
+                'root',
+                'password'
+            );
+        } catch (PDOException $e) {
+            exit('DB接続エラー:' . $e->getMessage());
+        }
     }
 
     public function findByUserId($userId): array {

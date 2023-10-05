@@ -29,12 +29,6 @@ if (!$blog) {
     exit;
 }
 
-// 投稿の削除処理
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] === 'delete') {
-    $blogRepo->deleteById((int) $blog_id);
-    header('Location: my_page.php');
-    exit;
-}
 
 ?>
 
@@ -59,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         <a href="edit.php?id=<?php echo $blog_id; ?>" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200">編集</a>
         <form action="post/delete.php" method="POST">
         <input type="hidden" name="id" value="<?php echo $blog_id; ?>">
-        <button type="submit" onclick="return confirm('本当に削除しますか？');" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-200">削除</button>
+        <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-200">削除</button>
         </form>
         <a href="mypage.php" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition duration-200">マイページへ戻る</a>
     </div>

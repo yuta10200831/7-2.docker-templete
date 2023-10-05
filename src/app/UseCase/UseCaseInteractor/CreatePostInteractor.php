@@ -2,7 +2,7 @@
 namespace App\UseCase\UseCaseInteractor;
 
 use App\UseCase\UseCaseInput\CreatePostInputData;
-use Application\UseCase\OutputData\CreatePostOutputData;
+use App\UseCase\UseCaseOutput\CreatePostOutputData;
 use App\Adapter\Repository\PostRepositoryInterface;
 use App\Domain\Entity\Post;
 
@@ -20,6 +20,10 @@ class CreatePostInteractor {
             $inputData->user_id
         );
         $this->postRepository->save($post);
+
+        $post_id = $this->postRepository->save($post);
+
+        return new CreatePostOutputData($post_id);
     }
 }
 ?>

@@ -3,10 +3,20 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 session_start();
 
+// ログインチェック
+if (!isset($_SESSION['user']['name'])) {
+    header('Location: login.php');
+    exit;
+}
+// ユーザーIDのチェック
+if (!isset($_SESSION['user']['id'])) {
+    header('Location: create.php');
+    exit;
+}
+
 use App\Infrastructure\Dao\BlogRepositoryMySQLImpl;
 
-$pdo = new PDO('mysql:host=mysql; dbname=blog; charset=utf8', 'root', 'password');
-$blogRepo = new BlogRepositoryMySQLImpl($pdo);
+$blogRepo = new BlogRepositoryMySQLImpl();
 
 $search_keyword = $_GET['search'] ?? '';
 $order = $_GET['order'] ?? 'new';
