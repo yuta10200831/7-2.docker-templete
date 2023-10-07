@@ -43,8 +43,6 @@ final class UserAgeDao
      */
     public function create(UserAge $userAge): void
     {
-        var_dump($userAge);
-
         $sql = sprintf(
             'INSERT INTO %s (user_id, age) VALUES (:user_id, :age)',
             self::TABLE_NAME
@@ -72,9 +70,11 @@ final class UserAgeDao
             self::TABLE_NAME
         );
         $statement = $this->pdo->prepare($sql);
-        $statement->bindValue(':user_id', $userId, PDO::PARAM_STR);
+        $statement->bindValue(':user_id', $userId, PDO::PARAM_INT);
         $statement->execute();
+
         $userAge = $statement->fetch(PDO::FETCH_ASSOC);
+
 
         return $userAge === false ? null : $userAge;
     }

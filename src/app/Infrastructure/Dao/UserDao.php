@@ -1,30 +1,17 @@
 <?php
 
 namespace App\Infrastructure\Dao;
-require_once __DIR__ . '/../../../vendor/autoload.php';
 use App\Domain\ValueObject\User\NewUser;
-use App\Domain\ValueObject\Email;
 use \PDO;
+use \Exception;
 
-/**
- * ユーザー情報を操作するDAO
- */
 final class UserDao
 {
-    /**
-     * DBのテーブル名
-     */
+
     const TABLE_NAME = 'users';
 
-    /**
-     * @var PDO
-     */
     private $pdo;
 
-    /**
-     * コンストラクタ
-     * @param PDO $pdo
-     */
     public function __construct()
     {
         try {
@@ -33,15 +20,38 @@ final class UserDao
                 'root',
                 'password'
             );
-        } catch (PDOException $e) {
-            exit('DB接続エラー:' . $e->getMessage());
+        } catch (\PDOException $e) {
+            throw new Exception('DB接続エラー: ' . $e->getMessage());
         }
     }
 
-    /**
-     * ユーザーを追加する
-     * @param  NewUser $user
-     */
+    public function getPdo()
+    {
+        return $this->pdo;
+    }
+
+    public function findByEmail($email): ?array
+    {
+        $sql = sprintf(
+            'SELECT * FROM %s WHERE email = :email',
+            self::TABLE_NAME
+        );
+        $statement = $this->pdo->prepare($sql);
+        $statement->bindValue(':email', $email->value(), PDO::PARAM_STR);
+
+        if (!$statement->execute()) {
+            throw new Exception('SQL実行エラー');
+        }
+
+        $user = $statement->fetch(PDO::FETCH_ASSOC);
+        return $user === false ? null : $user;
+    }
+
+    public function lastInsertId()
+    {
+        return $this->pdo->lastInsertId();
+    }
+
     public function create(NewUser $user): void
     {
         $hashedPassword = $user->password()->hash();
@@ -50,37 +60,18 @@ final class UserDao
             'INSERT INTO %s (name, email, password) VALUES (:name, :email, :password)',
             self::TABLE_NAME
         );
+
         $statement = $this->pdo->prepare($sql);
+
         $statement->bindValue(':name', $user->name()->value(), PDO::PARAM_STR);
-        $statement->bindValue(
-            ':email',
-            $user->email()->value(),
-            PDO::PARAM_STR
-        );
-        $statement->bindValue(
-            ':password',
-            $hashedPassword->value(),
-            PDO::PARAM_STR
-        );
-        $statement->execute();
-    }
+        $statement->bindValue(':email', $user->email()->value(), PDO::PARAM_STR);
+        $statement->bindValue(':password', $hashedPassword->value(), PDO::PARAM_STR);
 
-    /**
-     * ユーザーを検索する
-     * @param  Email $email
-     * @return array | null
-     */
-    public function findByEmail(Email $email): ?array
-    {
-        $sql = sprintf(
-            'SELECT * FROM %s WHERE email = :email',
-            self::TABLE_NAME
-        );
-        $statement = $this->pdo->prepare($sql);
-        $statement->bindValue(':email', $email->value(), PDO::PARAM_STR);
-        $statement->execute();
-        $user = $statement->fetch(PDO::FETCH_ASSOC);
-
-        return $user === false ? null : $user;
+        if (!$statement->execute()) {
+            throw new Exception('User could not be created.');
+        }
     }
 }
+
+
+?>

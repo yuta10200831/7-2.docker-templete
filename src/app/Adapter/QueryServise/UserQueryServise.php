@@ -1,45 +1,46 @@
 <?php
-
 namespace App\Adapter\QueryServise;
 require_once __DIR__ . '/../../../vendor/autoload.php';
+
+use App\Infrastructure\Dao\UserAgeDao;
 use App\Infrastructure\Dao\UserDao;
-use App\Domain\Entity\User;
-use App\Domain\ValueObject\User\UserId;
-use App\Domain\ValueObject\User\UserName;
 use App\Domain\ValueObject\Email;
-use App\Domain\ValueObject\HashedPassword;
+use App\Domain\ValueObject\User\UserName;
+use App\Domain\ValueObject\InputPassword;
 use App\Domain\ValueObject\Age;
+use App\Domain\Entity\User;
+use App\Domain\ValueObject\HashedPassword;
 use App\Domain\ValueObject\RegistrationDate;
+use App\Domain\ValueObject\User\UserId;
+
 
 
 final class UserQueryServise
 {
-    /**
-     * @var UserDao
-     */
     private $userDao;
+    private $userAgeDao;
 
     public function __construct()
     {
         $this->userDao = new UserDao();
+        $this->userAgeDao = new UserAgeDao();
     }
 
     public function findByEmail(Email $email): ?User
     {
         $userMapper = $this->userDao->findByEmail($email);
-
-        if ($this->notExistsUser($userMapper)) {
+        if (is_null($userMapper)) {
             return null;
         }
 
-        $ageValue = isset($userMapper['age']) ? (int)$userMapper['age'] : null;
+        $userAgeMapper = $this->userAgeDao->fetchAll((int)$userMapper['id']);
 
-        if ($ageValue === null) {
-            // nullのときの処理（例外を投げる、ログを出すなど）
-            throw new \Exception('Age is null');
+
+        if (is_null($userAgeMapper) || !isset($userAgeMapper['age'])) {
+            throw new \Exception('Age is null or not set');
         }
 
-        $age = new Age($ageValue);
+        $age = new Age((int)$userAgeMapper['age']);
         $registrationDate = new RegistrationDate($userMapper['registration_date']);
 
         return new User(
@@ -57,3 +58,4 @@ final class UserQueryServise
         return is_null($user);
     }
 }
+?>

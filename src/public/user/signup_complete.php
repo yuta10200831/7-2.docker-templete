@@ -15,6 +15,7 @@ use App\Infrastructure\Dao\UserAgeDao;
 $name = filter_input(INPUT_POST, 'name');
 $email = filter_input(INPUT_POST, 'email');
 $age = filter_input(INPUT_POST, 'age');
+
 $password = filter_input(INPUT_POST, 'password');
 $confirmPassword = filter_input(INPUT_POST, 'confirm_password');
 
@@ -35,12 +36,11 @@ try {
     if ($password !== $confirmPassword) {
         throw new Exception('パスワードが一致しません');
     }
-    
+
     $userName = new UserName($name);
     $userEmail = new Email($email);
     $userPassword = new InputPassword($password);
     $userAge = new Age($age);
-    var_dump($age);
     $useCaseInput = new SignUpInput(
         $userName,
         $userEmail,
@@ -51,12 +51,13 @@ try {
     $userAgeDao = new UserAgeDao();
     $useCase = new SignUpInteractor($useCaseInput, $userDao, $userAgeDao);
     $useCaseOutput = $useCase->handler();
-    
+    var_dump($useCaseOutput);  // 追加
+
     if (!$useCaseOutput->isSuccess()) {
         throw new Exception($useCaseOutput->message());
     }
-    
-    $lastUserId = $userDao->lastInsertId();
+
+    $lastUserId = $userDao->getPdo()->lastInsertId();
 
     $userAgeDao = new UserAgeDao();
     $userAgeDao->create($lastUserId, $userAge);
@@ -70,3 +71,5 @@ try {
     $_SESSION['user']['age'] = $age;
     Redirect::handler('signup.php');
 }
+
+?>

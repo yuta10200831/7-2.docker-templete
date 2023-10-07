@@ -28,7 +28,9 @@ final class UserAge
      */
     public function __construct(UserId $id, Age $age)
     {
-
+        echo "<!--";
+        var_dump($age);
+        echo "-->";
         $this->id = $id;
         $this->age = $age;
     }

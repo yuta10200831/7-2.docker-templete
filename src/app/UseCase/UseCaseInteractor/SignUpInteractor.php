@@ -103,7 +103,8 @@ final class SignUpInteractor
      */
     private function signup(): void
     {
-        $this->userRepository->insert(
+        // userRepositoryでusersテーブルに登録し、新規登録されたユーザーIDを取得
+        $newUserId = $this->userRepository->insert(
             new NewUser(
                 $this->input->name(),
                 $this->input->email(),
@@ -111,10 +112,11 @@ final class SignUpInteractor
             )
         );
 
-        $user = $this->findUser();
-
-        $this->userAgeDao->create(
-            new UserAge(new UserId($user['id']), $this->input->age())
-        );
+        // 新規登録されたユーザーIDを使って、userAgeDaoでusers_ageテーブルにも登録
+        if ($newUserId > 0) {
+            $this->userAgeDao->create(
+                new UserAge(new UserId($newUserId), $this->input->age())
+            );
+        }
     }
 }
