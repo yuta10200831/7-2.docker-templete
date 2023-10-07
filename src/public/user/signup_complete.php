@@ -15,7 +15,6 @@ use App\Infrastructure\Dao\UserAgeDao;
 $name = filter_input(INPUT_POST, 'name');
 $email = filter_input(INPUT_POST, 'email');
 $age = filter_input(INPUT_POST, 'age');
-
 $password = filter_input(INPUT_POST, 'password');
 $confirmPassword = filter_input(INPUT_POST, 'confirm_password');
 
@@ -51,12 +50,10 @@ try {
     $userAgeDao = new UserAgeDao();
     $useCase = new SignUpInteractor($useCaseInput, $userDao, $userAgeDao);
     $useCaseOutput = $useCase->handler();
-    var_dump($useCaseOutput);  // 追加
 
     if (!$useCaseOutput->isSuccess()) {
         throw new Exception($useCaseOutput->message());
     }
-
     $lastUserId = $userDao->getPdo()->lastInsertId();
 
     $userAgeDao = new UserAgeDao();
