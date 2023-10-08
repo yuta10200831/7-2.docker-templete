@@ -1,15 +1,12 @@
 <?php
-session_start();
-
 require_once __DIR__ . '/../../vendor/autoload.php';
-
 use App\Infrastructure\Dao\PostRepositoryMySQLImpl;
 use App\UseCase\UseCaseInput\CreatePostInputData;
 use App\UseCase\UseCaseInteractor\CreatePostInteractor;
+use App\Domain\ValueObject\Title;
+use App\Domain\ValueObject\Contents;
 
-$pdo = new PDO('mysql:host=mysql; dbname=blog; charset=utf8', 'root', 'password');
-$postRepository = new PostRepositoryMySQLImpl($pdo);
-
+session_start();
 $user_id = $_SESSION['user']['id'] ?? null;
 
 if (empty($user_id)) {
@@ -32,8 +29,13 @@ if (empty($title) || empty($contents)) {
     exit;
 }
 
+$postRepository = new PostRepositoryMySQLImpl();
+
 try {
-    $useCaseInput = new CreatePostInputData($title, $contents, $user_id);
+    $titleVo = new Title($title);
+    $contentsVo = new Contents($contents);
+
+    $useCaseInput = new CreatePostInputData($titleVo, $contentsVo, $user_id);
     $createPostInteractor = new CreatePostInteractor($postRepository);
     $createPostInteractor->handle($useCaseInput);
     header("Location: /index.php");

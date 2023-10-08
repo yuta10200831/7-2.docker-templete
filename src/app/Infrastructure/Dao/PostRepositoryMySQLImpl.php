@@ -23,16 +23,18 @@ class PostRepositoryMySQLImpl implements PostRepositoryInterface {
     }
 
     public function save(Post $post) {
-
         $sql = "INSERT INTO blogs (title, contents, user_id) VALUES (:title, :contents, :user_id)";
         $stmt = $this->pdo->prepare($sql);
 
-        $stmt->bindParam(':title', $post->getTitle());
-        $stmt->bindParam(':contents', $post->getContents());
-        $stmt->bindParam(':user_id', $post->getUserId());
+        $title = $post->getTitle()->getValue();
+        $contents = $post->getContents()->getValue();
+        $user_id = $post->getUserId();
+
+        $stmt->bindParam(':title', $title);
+        $stmt->bindParam(':contents', $contents);
+        $stmt->bindParam(':user_id', $user_id);
 
         $stmt->execute();
-
         return $this->pdo->lastInsertId();
     }
 }
