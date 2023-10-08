@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
+use App\Infrastructure\Dao\BlogRepositoryMySQLImpl;
 
 session_start();
 
@@ -13,8 +14,6 @@ if (!isset($_SESSION['user']['id'])) {
     header('Location: create.php');
     exit;
 }
-
-use App\Infrastructure\Dao\BlogRepositoryMySQLImpl;
 
 $blogRepo = new BlogRepositoryMySQLImpl();
 

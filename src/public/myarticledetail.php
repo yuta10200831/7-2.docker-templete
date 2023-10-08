@@ -1,9 +1,8 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
+use App\Infrastructure\Dao\BlogRepositoryMySQLImpl;
 
 session_start();
-
-use App\Infrastructure\Dao\BlogRepositoryMySQLImpl;
 
 // ログインチェック
 if (!isset($_SESSION['user']['name'])) {
@@ -16,8 +15,6 @@ if (!isset($_SESSION['user']['id'])) {
     header('Location: create.php');
     exit;
 }
-
-$pdo = new PDO('mysql:host=mysql; dbname=blog; charset=utf8', 'root', 'password');
 
 $blogRepo = new BlogRepositoryMySQLImpl($pdo);
 
