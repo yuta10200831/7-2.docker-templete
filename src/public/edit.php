@@ -1,11 +1,10 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
+use App\Infrastructure\Dao\BlogRepositoryMySQLImpl;
 
 session_start();
 
-use App\Infrastructure\Dao\BlogRepositoryMySQLImpl;
-
-$blogRepo = new BlogRepositoryMySQLImpl();
+$blogRepo = new BlogRepositoryMySQLImpl($pdo);
 $blog_id = $_GET['id'] ?? null;
 
 $blog = $blogRepo->findById($blog_id);

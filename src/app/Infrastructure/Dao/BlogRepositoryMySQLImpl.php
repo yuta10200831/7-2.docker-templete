@@ -34,6 +34,7 @@ class BlogRepositoryMySQLImpl implements BlogRepositoryInterface {
         }
         return $blogs;
     }
+
     public function findById(int $id): ?Blog {
         $sql = "SELECT * FROM blogs WHERE id = ?";
         $stmt = $this->pdo->prepare($sql);
@@ -44,16 +45,19 @@ class BlogRepositoryMySQLImpl implements BlogRepositoryInterface {
         }
         return new Blog($row['id'], $row['title'], $row['contents'], $row['user_id'], $row['created_at']);
     }
+
     public function deleteById(int $id): bool {
         $sql = "DELETE FROM blogs WHERE id = ?";
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([$id]);
     }
-    public function update(Blog $blog): void {
+
+    public function update(Blog $blog): bool {
         $sql = "UPDATE blogs SET title = ?, contents = ? WHERE id = ?";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$blog->getTitle(), $blog->getContents(), $blog->getId()]);
+        return $stmt->execute([$blog->getTitle()->getValue(), $blog->getContents()->getValue(), $blog->getId()]);
     }
+
     public function findAllWithQuery(?string $searchKeyword, string $order): array {
         $sql = "SELECT id, title, LEFT(contents, 15) AS short_contents, created_at FROM blogs";
         $placeholders = [];
@@ -71,3 +75,4 @@ class BlogRepositoryMySQLImpl implements BlogRepositoryInterface {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
+?>

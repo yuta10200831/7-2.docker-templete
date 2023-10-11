@@ -11,7 +11,9 @@ class Title {
         $this->value = $value;
     }
 
-    public function getValue() {
+    public function getValue(): string {
         return $this->value;
     }
 }
+
+?>
