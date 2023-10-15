@@ -1,14 +1,17 @@
 <?php
+
 require_once __DIR__ . '/../../vendor/autoload.php';
-use App\Infrastructure\Dao\PostRepositoryMySQLImpl;
-use App\UseCase\UseCaseInput\CreatePostInputData;
+use App\Infrastructure\Dao\PostRepository;
+use App\UseCase\UseCaseInput\CreatePostInput;
 use App\UseCase\UseCaseInteractor\CreatePostInteractor;
-use App\Domain\ValueObject\Title;
-use App\Domain\ValueObject\Contents;
+use App\Domain\ValueObject\Post\Title;
+use App\Domain\ValueObject\Post\Contents;
 
 session_start();
+
 $user_id = $_SESSION['user']['id'] ?? null;
 
+//ログインチェック
 if (empty($user_id)) {
     $_SESSION['error'] = "ログインが必要です";
     header('Location: /user/signin.php');
@@ -20,28 +23,29 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     exit;
 }
 
-$title = $_POST['title'] ?? '';
-$contents = $_POST['contents'] ?? '';
+$title = filter_input(INPUT_POST, 'title');
+$contents = filter_input(INPUT_POST, 'contents');
 
+//バリデーション
 if (empty($title) || empty($contents)) {
     $_SESSION['error'] = "タイトル又は内容が入力されていません";
     header('Location: /create.php');
     exit;
 }
 
-$postRepository = new PostRepositoryMySQLImpl();
-
+//登録処理
 try {
     $titleVo = new Title($title);
     $contentsVo = new Contents($contents);
+    $createUseCaseInput = new CreatePostInput($titleVo, $contentsVo, $user_id);
+    $createUseCase = new CreatePostInteractor($createUseCaseInput);
+    $createPostOutput = $createUseCase->handle();
 
-    $useCaseInput = new CreatePostInputData($titleVo, $contentsVo, $user_id);
-    $createPostInteractor = new CreatePostInteractor($postRepository);
-    $createPostInteractor->handle($useCaseInput);
     header("Location: /index.php");
     exit;
-} catch (Exception $e) {
+} catch (\Exception $e) {
     $_SESSION['error'] = $e->getMessage();
     header('Location: /create.php');
     exit;
 }
+?>

@@ -1,7 +1,9 @@
 <?php
-namespace App\Domain\ValueObject;
+namespace App\Domain\ValueObject\Post;
+use Exception;
 
-class Contents {
+class Contents
+{
     private $value;
 
     public function __construct($value) {

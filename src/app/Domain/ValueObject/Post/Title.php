@@ -1,7 +1,9 @@
 <?php
-namespace App\Domain\ValueObject;
+namespace App\Domain\ValueObject\Post;
+use Exception;
 
-class Title {
+class Title
+{
     private $value;
 
     public function __construct($value) {
@@ -15,3 +17,4 @@ class Title {
         return $this->value;
     }
 }
+?>
