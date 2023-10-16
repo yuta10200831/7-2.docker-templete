@@ -1,27 +1,24 @@
 <?php
+
 require_once __DIR__ . '/../vendor/autoload.php';
-use App\Infrastructure\Dao\BlogRepositoryMySQLImpl;
+use App\Adapter\Repository\BlogRepository;
+use App\Adapter\QueryService\BlogQueryService;
+use App\UseCase\UseCaseInput\IndexInput;
+use App\UseCase\UseCaseInteractor\IndexInteractor;
 
-session_start();
+$blogRepository = new BlogRepositoryImpl();
 
-// ログインチェック
-if (!isset($_SESSION['user']['name'])) {
-    header('Location: login.php');
-    exit;
-}
-// ユーザーIDのチェック
-if (!isset($_SESSION['user']['id'])) {
-    header('Location: create.php');
-    exit;
-}
+// IndexInteractorの初期化
+$indexInteractor = new IndexInteractor($blogRepository, $blogQueryService);
 
-$blogRepo = new BlogRepositoryMySQLImpl();
-
-$search_keyword = $_GET['search'] ?? '';
+// IndexInputの初期化（検索キーワードと並び順は適当な値またはユーザー入力から取得）
+$searchKeyword = $_GET['search'] ?? null;
 $order = $_GET['order'] ?? 'new';
+$indexInput = new IndexInput($searchKeyword, $order);
 
-$blogs = $blogRepo->findAllWithQuery($search_keyword, $order);
+$indexOutput = $indexInteractor->handle($indexInput);
 
+$blogs = $indexOutput->getBlogs();
 
 ?>
 

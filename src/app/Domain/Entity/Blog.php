@@ -46,3 +46,4 @@ class Blog {
         $this->contents = $contents;
     }
 }
+?>

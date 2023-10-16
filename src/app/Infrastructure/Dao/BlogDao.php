@@ -1,13 +1,9 @@
 <?php
 
 namespace App\Infrastructure\Dao;
+use \PDO;
 
-use App\Domain\Entity\Blog;
-use App\Adapter\Repository\BlogRepositoryInterface;
-use PDO;
-use PDOException;
-
-class BlogRepositoryMySQLImpl implements BlogRepositoryInterface {
+class BlogDao {
     private $pdo;
 
     public function __construct() {
@@ -26,40 +22,20 @@ class BlogRepositoryMySQLImpl implements BlogRepositoryInterface {
         $sql = "SELECT * FROM blogs WHERE user_id = ? ORDER BY created_at DESC";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$userId]);
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $blogs = [];
-        foreach ($rows as $row) {
-            $blog = new Blog($row['id'], $row['title'], $row['contents'], $row['user_id'], $row['created_at']);
-            $blogs[] = $blog;
-        }
-
-        return $blogs;
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function findById(int $id): ?Blog {
+    public function findById(int $id): ?array {
         $sql = "SELECT * FROM blogs WHERE id = ?";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$id]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$row) {
-            return null;
-        }
-
-        return new Blog($row['id'], $row['title'], $row['contents'], $row['user_id'], $row['created_at']);
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
     }
 
-    public function deleteById(int $id): bool {
-        $sql = "DELETE FROM blogs WHERE id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([$id]);
-    }
-
-    public function update(Blog $blog): void {
+    public function update(array $blogData): void {
         $sql = "UPDATE blogs SET title = ?, contents = ? WHERE id = ?";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$blog->getTitle(), $blog->getContents(), $blog->getId()]);
+        $stmt->execute([$blogData['title'], $blogData['contents'], $blogData['id']]);
     }
 
     public function findAllWithQuery(?string $searchKeyword, string $order): array {
@@ -82,3 +58,4 @@ class BlogRepositoryMySQLImpl implements BlogRepositoryInterface {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
+?>
