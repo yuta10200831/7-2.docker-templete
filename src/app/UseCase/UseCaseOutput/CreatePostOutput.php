@@ -4,16 +4,23 @@ namespace App\UseCase\UseCaseOutput;
 
 final class CreatePostOutput
 {
-    private $post_id;
+    private $isSuccess;
+    private $message;
 
-    public function __construct(int $post_id)
+    public function __construct(bool $isSuccess, string $message)
     {
-        $this->post_id = $post_id;
+        $this->isSuccess = $isSuccess;
+        $this->message = $message;
     }
 
-    public function postId(): int
+    public function isSuccess(): bool
     {
-        return $this->post_id;
+        return $this->isSuccess;
+    }
+
+    public function message(): string
+    {
+        return $this->message;
     }
 }
 

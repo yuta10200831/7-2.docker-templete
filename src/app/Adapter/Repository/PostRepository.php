@@ -9,9 +9,9 @@ final class PostRepository
 {
     private $postDao;
 
-    public function __construct(PostDao $postDao)
+    public function __construct()
     {
-        $this->postDao = $postDao;
+        $this->postDao = new PostDao();
     }
 
     public function save(Post $post): int

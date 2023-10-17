@@ -5,21 +5,18 @@ require_once __DIR__ . '/../../../vendor/autoload.php';
 use App\UseCase\UseCaseInput\CreatePostInput;
 use App\UseCase\UseCaseOutput\CreatePostOutput;
 use App\Adapter\Repository\PostRepository;
-use App\Infrastructure\Dao\PostDao;
 use App\Domain\Entity\Post;
-use App\Domain\ValueObject\Post\Title;
-use App\Domain\ValueObject\Post\Contents;
 
-class CreatePostInteractor
+final class CreatePostInteractor
 {
+    const COMPLETED_MESSAGE = "投稿が完了しました";
+
     private $postRepository;
     private $input;
 
     public function __construct(CreatePostInput $input)
     {
-        $createDao = new PostDao();
-
-        $this->postRepository = new PostRepository($createDao);
+        $this->postRepository = new PostRepository();
         $this->input = $input;
     }
 
@@ -31,11 +28,9 @@ class CreatePostInteractor
             $this->input->getUserId()
         );
 
-        $newId = $this->postRepository->save($post);
+        $this->postRepository->save($post);
 
-        return new CreatePostOutput($newId);
+        return new CreatePostOutput(true, self::COMPLETED_MESSAGE);
     }
 }
-
-
 ?>
