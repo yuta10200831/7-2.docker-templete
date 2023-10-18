@@ -4,15 +4,16 @@ use Exception;
 
 class Contents
 {
-    private $value;
+    private string $value;
 
-    public function __construct($value) {
-        if (empty($value)) {
-            throw new \Exception("内容を入力してください");
+    public function __construct(string $value) {
+        if (mb_strlen($value) > 3000) {
+            throw new \Exception("内容は3000文字以内にしてください");
         }
         $this->value = $value;
     }
-    public function getValue() {
+
+    public function getValue(): string {
         return $this->value;
     }
 }

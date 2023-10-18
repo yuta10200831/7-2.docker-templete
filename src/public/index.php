@@ -6,18 +6,23 @@ use App\Adapter\QueryService\BlogQueryService;
 use App\UseCase\UseCaseInput\IndexInput;
 use App\UseCase\UseCaseInteractor\IndexInteractor;
 
-$blogRepository = new BlogRepositoryImpl();
+// RepositoryとQueryServiceのインスタンスを生成
+$blogRepository = new BlogRepository();
+$blogQueryService = new BlogQueryService();
 
-// IndexInteractorの初期化
+// Interactorのインスタンスを生成
 $indexInteractor = new IndexInteractor($blogRepository, $blogQueryService);
 
-// IndexInputの初期化（検索キーワードと並び順は適当な値またはユーザー入力から取得）
 $searchKeyword = $_GET['search'] ?? null;
 $order = $_GET['order'] ?? 'new';
+
+// IndexInputのインスタンスを生成
 $indexInput = new IndexInput($searchKeyword, $order);
 
+// Interactorを実行し、結果を取得
 $indexOutput = $indexInteractor->handle($indexInput);
 
+// 結果をHTMLで表示するためのデータを取得
 $blogs = $indexOutput->getBlogs();
 
 ?>
