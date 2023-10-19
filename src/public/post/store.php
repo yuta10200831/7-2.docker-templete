@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../../vendor/autoload.php';
+use App\Infrastructure\Redirect\Redirect;
 use App\Infrastructure\Dao\PostRepository;
 use App\UseCase\UseCaseInput\CreatePostInput;
 use App\UseCase\UseCaseInteractor\CreatePostInteractor;
@@ -41,8 +42,12 @@ try {
     $createUseCase = new CreatePostInteractor($createUseCaseInput);
     $createPostOutput = $createUseCase->handle();
 
-    header("Location: /index.php");
-    exit;
+    if (!$createPostOutput->isSuccess()) {
+        throw new Exception($createPostOutput->message());
+    }
+
+    $_SESSION['message'] = $createPostOutput->message();
+    Redirect::handler('/index.php');
 } catch (\Exception $e) {
     $_SESSION['error'] = $e->getMessage();
     header('Location: /create.php');
