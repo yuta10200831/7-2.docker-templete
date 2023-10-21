@@ -6,20 +6,23 @@ final class IndexInput
     private $search_keyword;
     private $order;
 
-    public function __construct($search_keyword, $order)
+    public function __construct(?string $searchKeyword, string $order, int $userId)
     {
-        $this->search_keyword = $search_keyword;
+        $this->searchKeyword = $searchKeyword;
         $this->order = $order;
+        $this->userId = $userId;
     }
 
-    public function getSearchKeyword()
-    {
-        return $this->search_keyword;
+    public function getSearchKeyword(): ?string {
+        return $this->searchKeyword;
     }
 
-    public function getOrder()
-    {
+    public function getOrder(): string {
         return $this->order;
+    }
+
+    public function getUserId(): int {
+        return $this->userId;
     }
 }
 ?>

@@ -20,3 +20,5 @@ final class BlogRepository
         ]);
     }
 }
+
+?>

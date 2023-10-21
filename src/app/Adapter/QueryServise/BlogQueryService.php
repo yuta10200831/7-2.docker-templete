@@ -1,5 +1,5 @@
 <?php
-namespace App\Adapter\QueryService;
+namespace App\Adapter\QueryServise;
 
 use App\Infrastructure\Dao\BlogDao;
 use App\Domain\Entity\Blog;
@@ -44,6 +44,20 @@ final class BlogQueryService
         }
 
         return $blogs;
+    }
+
+    public function findById($id): ?Blog {
+        $blogMapper = $this->blogDao->findById($id);
+        if ($blogMapper === null) {
+            return null;
+        }
+        return new Blog(
+            $blogMapper['id'],
+            $blogMapper['title'],
+            $blogMapper['contents'],
+            $blogMapper['user_id'],
+            $blogMapper['created_at']
+        );
     }
 }
 

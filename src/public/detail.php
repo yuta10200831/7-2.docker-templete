@@ -1,37 +1,40 @@
 <?php
+require_once __DIR__ . '/../vendor/autoload.php';
+use App\Adapter\QueryServise\BlogQueryService;
+use App\Adapter\QueryServise\CommentQueryService;
+use App\Infrastructure\Dao\CommentDao;
+use App\Infrastructure\Redirect\Redirect;
+
 session_start();
 
 // ログインチェック
 if (!isset($_SESSION['user']['name'])) {
-  header('Location: user/signin.php');
-  exit;
+    Redirect::handler('user/signin.php');
 }
 
 // ユーザーIDのチェック
 if (!isset($_SESSION['user']['id'])) {
-  header('Location: user/signin.php');
-  exit;
+    Redirect::handler('user/signin.php');
 }
 
-$pdo = new PDO('mysql:host=mysql; dbname=blog; charset=utf8', 'root', 'password');
+$blogQueryService = new BlogQueryService();
 
-$blog_id = $_GET['id'] ?? null;
+$blog_id = filter_input(INPUT_GET, 'id');
+if (empty($blog_id)) {
+    Redirect::handler('index.php');
+}
 
-$stmt = $pdo->prepare("SELECT * FROM blogs WHERE id = ?");
-$stmt->execute([$blog_id]);
-$blog = $stmt->fetch(PDO::FETCH_ASSOC);
-
+$blog = $blogQueryService->findById($blog_id);
 if (!$blog) {
-    header('Location: index.php');
-    exit;
+    Redirect::handler('index.php');
 }
 
 $error_message = $_SESSION['error'] ?? '';
 unset($_SESSION['error']);
 
-$stmt = $pdo->prepare("SELECT * FROM comments WHERE blog_id = ? ORDER BY created_at DESC");
-$stmt->execute([$blog_id]);
-$comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$commentDao = new CommentDao();
+$commentQueryService = new CommentQueryService($commentDao);
+$comments = $commentQueryService->findByBlogId($blog_id);
 ?>
 
 <!DOCTYPE html>
@@ -46,9 +49,9 @@ $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body class="bg-gray-100">
     <main class="container mx-auto mt-10">
         <article class="bg-white rounded-lg shadow p-4 mb-8">
-            <h1 class="text-2xl font-semibold mb-4"><?php echo htmlspecialchars($blog['title']); ?></h1>
-            <p class="text-gray-500 mb-4"><?php echo htmlspecialchars($blog['created_at']); ?></p>
-            <div><?php echo nl2br(htmlspecialchars($blog['contents'])); ?></div>
+            <h1 class="text-2xl font-semibold mb-4"><?php echo htmlspecialchars($blog->getTitle()); ?></h1>
+            <p class="text-gray-500 mb-4"><?php echo htmlspecialchars($blog->getCreatedAt()); ?></p>
+            <div><?php echo htmlspecialchars($blog->getContents()); ?></div>
             <div class="mt-4">
               <a href="index.php" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">記事一覧へ戻る</a>
             </div>
@@ -80,9 +83,9 @@ $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
               <br>
             <?php foreach ($comments as $comment): ?>
             <div class="mb-6">
-              <p class="text-gray-600"><?php echo nl2br(htmlspecialchars($comment['comments'])); ?></p>
-              <small class="text-gray-400"><?php echo htmlspecialchars($comment['created_at']); ?></small>
-              <p class="text-gray-600"><?php echo nl2br(htmlspecialchars($comment['commenter_name'])); ?></p>
+              <p class="text-gray-600"><?php echo htmlspecialchars($comment->getTitle()); ?></p>
+              <small class="text-gray-400"><?php echo htmlspecialchars($comment->getCreatedAt()); ?></small>
+              <p class="text-gray-600"><?php echo nl2br(htmlspecialchars($comment->getCommenterName())); ?></p>
             <div class="h-1 bg-green-500 w-1/4 mt-2"></div>
             </div>
             <?php endforeach; ?>

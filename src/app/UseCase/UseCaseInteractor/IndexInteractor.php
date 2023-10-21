@@ -1,8 +1,7 @@
 <?php
 namespace App\UseCase\UseCaseInteractor;
-
 use App\Adapter\Repository\BlogRepository;
-use App\Adapter\QueryService\BlogQueryService;
+use App\Adapter\QueryServise\BlogQueryService;
 use App\UseCase\UseCaseInput\IndexInput;
 use App\UseCase\UseCaseOutput\IndexOutput;
 

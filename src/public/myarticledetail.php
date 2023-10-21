@@ -1,6 +1,9 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
-use App\Infrastructure\Dao\BlogRepository;
+use App\Adapter\QueryServise\BlogQueryService;
+use App\UseCase\UseCaseInput\IndexInput;
+use App\UseCase\UseCaseInteractor\IndexInteractor;
+use App\Infrastructure\Dao\BlogDao;
 
 session_start();
 
@@ -16,16 +19,19 @@ if (!isset($_SESSION['user']['id'])) {
     exit;
 }
 
-$blogRepo = new BlogRepositoryMyS();
+// ここでBlogQueryServiceのインスタンスを作成
+$blogQueryService = new BlogQueryService();
 
-$blog_id = $_GET['id'] ?? null;
-$blog = $blogRepo->findById((int) $blog_id);
+// ID取得(URLから)
+$someId = $_GET['id'] ?? null;
 
-if (!$blog) {
-    header('Location: my_page.php');
+// BlogQueryServiceを使ってデータを取得
+$blog = $blogQueryService->findById($someId);
+
+if ($blog === null) {
+    header('Location: mypage.php');
     exit;
 }
-
 
 ?>
 

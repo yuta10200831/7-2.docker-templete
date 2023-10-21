@@ -1,5 +1,9 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
+use App\Adapter\Repository\BlogRepository;
+use App\Adapter\QueryServise\BlogQueryService;
+use App\UseCase\UseCaseInput\IndexInput;
+use App\UseCase\UseCaseInteractor\IndexInteractor;
 
 session_start();
 
@@ -9,13 +13,16 @@ if (!isset($_SESSION['user']['id'])) {
     exit;
 }
 
-$pdo = new PDO('mysql:host=mysql; dbname=blog; charset=utf8', 'root', 'password');
+// RepositoryとQueryServiceのインスタンスを生成
+$blogRepository = new BlogRepository();
+$blogQueryService = new BlogQueryService();
+
+// Interactorのインスタンスを生成
+$indexInteractor = new IndexInteractor($blogRepository, $blogQueryService);
 
 $user_id = $_SESSION['user']['id'];
 
-$blogRepository = new \App\Infrastructure\Dao\BlogRepositoryMySQLImpl($pdo);
-
-$my_blogs = $blogRepository->findByUserId($user_id);
+$my_blogs = $blogQueryService->findByUserId($user_id);
 
 ?>
 <!DOCTYPE html>
