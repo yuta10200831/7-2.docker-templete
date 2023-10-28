@@ -32,12 +32,6 @@ class BlogDao {
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
     }
 
-    public function update(array $blogData): void {
-        $sql = "UPDATE blogs SET title = ?, contents = ? WHERE id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$blogData['title'], $blogData['contents'], $blogData['id']]);
-    }
-
     public function findAllWithQuery(?string $searchKeyword, string $order): array {
         $sql = "SELECT id, title, LEFT(contents, 15) AS short_contents, created_at FROM blogs";
         $placeholders = [];

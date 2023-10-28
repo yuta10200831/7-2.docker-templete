@@ -1,5 +1,5 @@
 <?php
-namespace App\Domain\ValueObject\Comment;
+namespace App\Domain\ValueObject;
 
 use Exception;
 

@@ -1,7 +1,8 @@
 <?php
 require_once __DIR__ . '/../../vendor/autoload.php';
 use App\Infrastructure\Redirect\Redirect;
-use App\Domain\ValueObject\Comment;
+use App\Domain\ValueObject\BlogId;
+use App\Domain\ValueObject\CommentText;
 use App\UseCase\UseCaseInput\CommentInput;
 use App\UseCase\UseCaseInteractor\CommentInteractor;
 
@@ -19,13 +20,14 @@ if (empty($commentContent)) {
 }
 
 try {
-    $commentContentValueObject = new CommentContent($commentContent);
-    $useCaseInput = new CommentInput($blog_id, $_SESSION['user']['id'], $commentContentValueObject);
-    $useCase = new CommentInteractor($useCaseInput);
-    $useCaseOutput = $useCase->handler();
+    $blogIdObject = new BlogId((int)$blog_id);
+    $commentText = new CommentText($commentContent);
 
+    $useCaseInput = new CommentInput($blog_id);
+    $useCase = new CommentInteractor($useCaseInput);
+    $useCaseOutput = $useCase->handler($commentText->getValue(), $_SESSION['user']['id']);
     if (!$useCaseOutput->isSuccess()) {
-        throw new Exception($useCaseOutput->message());
+        throw new Exception($useCaseOutput->getMessage());
     }
 
     Redirect::handler("/detail.php?id={$blog_id}");

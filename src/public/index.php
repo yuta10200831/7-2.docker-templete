@@ -9,15 +9,17 @@ use App\UseCase\UseCaseInteractor\IndexInteractor;
 session_start();
 
 // ログインチェック
-if (!isset($_SESSION['user']['name'])) {
-    header('Location: login.php');
-    exit;
-}
+    if (!isset($_SESSION['user']['name'])) {
+        header('Location: login.php');
+        exit;
+    }
+
 // ユーザーIDのチェック
-if (!isset($_SESSION['user']['id'])) {
-    header('Location: create.php');
-    exit;
-}
+    if (!isset($_SESSION['user']['id'])) {
+        header('Location: create.php');
+        exit;
+    }
+
 // RepositoryとQueryServiceのインスタンスを生成
 $blogRepository = new BlogRepository();
 $blogQueryService = new BlogQueryService();
