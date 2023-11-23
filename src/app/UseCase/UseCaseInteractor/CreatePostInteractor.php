@@ -1,29 +1,36 @@
 <?php
-namespace App\UseCase\UseCaseInteractor;
 
-use App\UseCase\UseCaseInput\CreatePostInputData;
-use App\UseCase\UseCaseOutput\CreatePostOutputData;
-use App\Adapter\Repository\PostRepositoryInterface;
+namespace App\UseCase\UseCaseInteractor;
+require_once __DIR__ . '/../../../vendor/autoload.php';
+use App\UseCase\UseCaseInput\CreatePostInput;
+use App\UseCase\UseCaseOutput\CreatePostOutput;
+use App\Adapter\Repository\PostRepository;
 use App\Domain\Entity\Post;
 
-class CreatePostInteractor {
-    private $postRepository;
+final class CreatePostInteractor
+{
+    const COMPLETED_MESSAGE = "投稿が完了しました";
 
-    public function __construct(PostRepositoryInterface $postRepository) {
-        $this->postRepository = $postRepository;
+    private $postRepository;
+    private $input;
+
+    public function __construct(CreatePostInput $input)
+    {
+        $this->postRepository = new PostRepository();
+        $this->input = $input;
     }
 
-    public function handle(CreatePostInputData $inputData) {
+    public function handle(): CreatePostOutput
+    {
         $post = new Post(
-            $inputData->title,
-            $inputData->contents,
-            $inputData->user_id
+            $this->input->getTitle(),
+            $this->input->getContents(),
+            $this->input->getUserId()
         );
+
         $this->postRepository->save($post);
 
-        $post_id = $this->postRepository->save($post);
-
-        return new CreatePostOutputData($post_id);
+        return new CreatePostOutput(true, self::COMPLETED_MESSAGE);
     }
 }
 ?>
