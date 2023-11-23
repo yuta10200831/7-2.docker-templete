@@ -1,16 +1,13 @@
 <?php
-namespace App\Domain\ValueObject;
+namespace App\Domain\ValueObject\Index;
 
 use Exception;
 
-class CommentText
-{
+class CommentText {
     private string $value;
 
     public function __construct(string $value) {
-        if (empty(trim($value))) {
-            throw new Exception("コメントを入力して下さい");
-        }
+
         $this->value = $value;
     }
 
@@ -18,4 +15,5 @@ class CommentText
         return $this->value;
     }
 }
+
 ?>

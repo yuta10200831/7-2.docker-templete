@@ -1,38 +1,39 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
-use App\Adapter\QueryServise\BlogQueryService;
-use App\UseCase\UseCaseInput\IndexInput;
-use App\UseCase\UseCaseInteractor\IndexInteractor;
-use App\Infrastructure\Dao\BlogDao;
+use App\Domain\ValueObject\User\UserId;
+use App\Domain\ValueObject\Index\BlogId;
+use App\UseCase\UseCaseInput\MyArticleDetailInput;
+use App\UseCase\UseCaseInteractor\MyArticleDetailInteractor;
+use App\Infrastructure\Redirect\Redirect;
 
 session_start();
 
-// ログインチェック
-if (!isset($_SESSION['user']['name'])) {
-    header('Location: login.php');
-    exit;
-}
-
-// ユーザーIDのチェック
 if (!isset($_SESSION['user']['id'])) {
-    header('Location: create.php');
-    exit;
+    throw new Exception('ログインが必要です。');
 }
 
-// ここでBlogQueryServiceのインスタンスを作成
-$blogQueryService = new BlogQueryService();
+$userId = new UserId($_SESSION['user']['id']);
+$blogIdValue = $_GET['id'] ?? null;
 
-// ID取得(URLから)
-$someId = $_GET['id'] ?? null;
-
-// BlogQueryServiceを使ってデータを取得
-$blog = $blogQueryService->findById($someId);
-
-if ($blog === null) {
-    header('Location: mypage.php');
-    exit;
+if ($blogIdValue === null || !is_numeric($blogIdValue) || $blogIdValue <= 0) {
+    throw new Exception('不正なブログIDです。');
 }
 
+try {
+
+    $blogId = new BlogId((int)$blogIdValue);
+    $input = new MyArticleDetailInput($userId, $blogId);
+    $interactor = new MyArticleDetailInteractor();
+    $output = $interactor->handle($input);
+    $article = $output->getBlogs();
+    if (!$article) {
+        throw new Exception('記事が見つかりませんでした。');
+    }
+} catch (Exception $e) {
+    $_SESSION['errors'][] = $e->getMessage();
+    Redirect::handler('mypage.php');
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -47,9 +48,10 @@ if ($blog === null) {
 
 <main class="container mx-auto mt-10 p-4 max-w-2xl bg-white rounded-lg shadow-lg">
     <!-- 記事の表示 -->
-    <h2 class="text-2xl font-bold mb-4"><?php echo htmlspecialchars($blog->getTitle()); ?></h2>
-    <p class="text-gray-500 mb-4"><?php echo htmlspecialchars($blog->getCreatedAt()); ?></p>
-    <p class="mb-6 text-gray-700"><?php echo nl2br(htmlspecialchars($blog->getContents())); ?></p>
+    <h2 class="text-2xl font-bold mb-4"><?php echo htmlspecialchars($article->getTitle()->getValue()); ?></h2>
+    <p class="text-gray-500 mb-4"><?php echo htmlspecialchars($article->getCreatedAt()->format('Y-m-d H:i:s')); ?></p>
+    <p class="mb-6 text-gray-700"><?php echo nl2br(htmlspecialchars($article->getContents()->getValue())); ?></p>
+
 
 <!-- 編集・削除ボタン -->
     <div class="flex space-x-4">

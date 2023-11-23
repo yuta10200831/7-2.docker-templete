@@ -3,6 +3,7 @@ namespace App\Infrastructure\Dao;
 require_once __DIR__ . '/../../../vendor/autoload.php';
 use App\Domain\ValueObject\CommentText;
 use App\Domain\ValueObject\User\Comment;
+use App\Domain\ValueObject\Index\BlogId;
 use \PDO;
 
 final class CommentDao {
@@ -21,20 +22,18 @@ final class CommentDao {
         }
     }
 
-    public function storeComment(int $blogId, string $comment, string $commenterName): bool {
-        $sql = 'INSERT INTO comments (blog_id, user_id, comments, commenter_name, created_at) VALUES (:blog_id, :user_id, :comment, :commenter_name, NOW())';
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->bindValue(':blog_id', $blogId, PDO::PARAM_INT);
-        $stmt->bindValue(':comment', $comment, PDO::PARAM_STR);
+    public function storeComment(BlogId $blogId, string $comment, string $commenterName, int $userId): bool {
+        $stmt = $this->pdo->prepare("INSERT INTO comments (user_id, blog_id, commenter_name, comments) VALUES (:user_id, :blog_id, :commenter_name, :comments)");
+        $stmt->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $stmt->bindValue(':blog_id', $blogId->getValue(), PDO::PARAM_INT);
         $stmt->bindValue(':commenter_name', $commenterName, PDO::PARAM_STR);
-        $stmt->bindValue(':user_id', $userId, PDO::PARM_INT);
-
+        $stmt->bindValue(':comments', $comment, PDO::PARAM_STR);
         return $stmt->execute();
     }
 
     public function findByBlogId($blogId): array {
         $stmt = $this->pdo->prepare("SELECT * FROM comments WHERE blog_id = ? ORDER BY created_at DESC");
-        $stmt->execute([$blogId]);
+        $stmt->execute([$blogId->getValue()]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

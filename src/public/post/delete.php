@@ -3,10 +3,10 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 session_start();
 
-use App\Infrastructure\Dao\BlogRepositoryMySQLImpl;
+use App\Infrastructure\Dao\BlogRepository;
 
 $pdo = new PDO('mysql:host=mysql; dbname=blog; charset=utf8', 'root', 'password');
-$blogRepo = new BlogRepositoryMySQLImpl($pdo);
+$blogRepo = new BlogRepository($pdo);
 
 $blog_id = $_POST['id'] ?? null;
 

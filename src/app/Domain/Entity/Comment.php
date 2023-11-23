@@ -1,5 +1,6 @@
 <?php
 namespace App\Domain\Entity;
+use App\Domain\ValueObject\Index\BlogId;
 
 class Comment {
     private $id;
@@ -8,7 +9,7 @@ class Comment {
     private $commenterName;
     private $createdAt;
 
-    public function __construct($id, $comment, $blogId, $commenterName, $createdAt) {
+    public function __construct($id, $comment, BlogId $blogId, $commenterName, $createdAt) {
         $this->id = $id;
         $this->comment = $comment;
         $this->blogId = $blogId;

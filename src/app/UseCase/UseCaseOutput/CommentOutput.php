@@ -19,7 +19,7 @@ final class CommentOutput
         return $this->isSuccess;
     }
 
-    public function message(): string
+    public function getMessage(): string
     {
         return $this->message;
     }

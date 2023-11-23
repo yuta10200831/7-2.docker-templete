@@ -1,8 +1,8 @@
 <?php
 namespace App\UseCase\UseCaseInput;
 
-use App\Domain\ValueObject\BlogId;
-use App\Domain\ValueObject\CommentText;
+use App\Domain\ValueObject\Index\BlogId;
+use App\Domain\ValueObject\Index\CommentText;
 
 final class CommentInput
 {

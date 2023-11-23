@@ -1,5 +1,5 @@
 <?php
-namespace App\Domain\ValueObject;
+namespace App\Domain\ValueObject\Index;
 
 use Exception;
 
@@ -9,7 +9,7 @@ class BlogId
 
     public function __construct(int $value)
     {
-        if ($value <= 0) {
+            if ($value <= 0) {
             throw new Exception("ブログIDは正の整数である必要があります");
         }
         $this->value = $value;
@@ -20,3 +20,4 @@ class BlogId
         return $this->value;
     }
 }
+?>

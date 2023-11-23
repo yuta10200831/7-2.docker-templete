@@ -1,44 +1,39 @@
 <?php
-
 require_once __DIR__ . '/../vendor/autoload.php';
-use App\Adapter\Repository\BlogRepository;
-use App\Adapter\QueryServise\BlogQueryService;
-use App\UseCase\UseCaseInput\IndexInput;
 use App\UseCase\UseCaseInteractor\IndexInteractor;
+use App\UseCase\UseCaseInput\IndexInput;
+use App\Infrastructure\Redirect\Redirect;
 
 session_start();
 
 // ログインチェック
-    if (!isset($_SESSION['user']['name'])) {
-        header('Location: login.php');
-        exit;
-    }
+if (!isset($_SESSION['user']['name'])) {
+    header('Location: login.php');
+    exit;
+}
 
 // ユーザーIDのチェック
-    if (!isset($_SESSION['user']['id'])) {
-        header('Location: create.php');
-        exit;
-    }
+if (!isset($_SESSION['user']['id'])) {
+    header('Location: create.php');
+    exit;
+}
 
-// RepositoryとQueryServiceのインスタンスを生成
-$blogRepository = new BlogRepository();
-$blogQueryService = new BlogQueryService();
+try {
+    // IndexInputのインスタンスを生成
+    $indexInput = new IndexInput($_GET['search'] ?? null, $_GET['order'] ?? 'new', $_SESSION['user']['id']);
 
-// Interactorのインスタンスを生成
-$indexInteractor = new IndexInteractor($blogRepository, $blogQueryService);
+    // IndexInteractorのインスタンスを生成
+    $indexInteractor = new IndexInteractor($indexInput);
 
-$searchKeyword = $_GET['search'] ?? null;
-$order = $_GET['order'] ?? 'new';
-
-// IndexInputのインスタンスを生成
-$indexInput = new IndexInput($_GET['search'] ?? null, $_GET['order'] ?? 'new', $_SESSION['user']['id']);
-
-// Interactorを実行し、結果を取得
-$indexOutput = $indexInteractor->handle($indexInput);
-
-// 結果をHTMLで表示するためのデータを取得
-$blogs = $indexOutput->getBlogs();
-
+    // Interactorを実行し、結果を取得
+    $indexOutput = $indexInteractor->handle();
+    $blogs = $indexOutput->getBlogs();
+} catch (Exception $e) {
+    // エラー処理
+    $_SESSION['errors'][] = $e->getMessage();
+    Redirect::handler('error.php');
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
