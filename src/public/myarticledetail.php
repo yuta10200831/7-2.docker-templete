@@ -23,8 +23,8 @@ try {
 
     $blogId = new BlogId((int)$blogIdValue);
     $input = new MyArticleDetailInput($userId, $blogId);
-    $interactor = new MyArticleDetailInteractor();
-    $output = $interactor->handle($input);
+    $interactor = new MyArticleDetailInteractor($input);
+    $output = $interactor->handle();
     $article = $output->getBlogs();
     if (!$article) {
         throw new Exception('記事が見つかりませんでした。');

@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
-use App\UseCase\UseCaseInteractor\CommentInteractor;
+use App\UseCase\UseCaseInteractor\CommentGetInteractor;
 use App\UseCase\UseCaseInteractor\DetailInteractor;
 use App\UseCase\UseCaseInput\CommentInput;
 use App\UseCase\UseCaseInput\DetailInput;
@@ -17,16 +17,16 @@ try {
   $blogId = new BlogId((int)$getBlogId);
   $userId = new UserId($_SESSION['user']['id']);
   $input = new DetailInput($userId, $blogId);
-  $interactor = new DetailInteractor();
-  $output = $interactor->handle($input);
+  $interactor = new DetailInteractor($input);
+  $output = $interactor->handle();
   $detail = $output->getBlogs();
   if (!$detail) {
       throw new Exception('記事が見つかりませんでした。');
   }
   // コメントの取得
-  $commentInteractor = new CommentInteractor(new CommentInput($blogId, new CommentText('')));
+  $commentInteractor = new CommentGetInteractor(new CommentInput($blogId, new CommentText('')));
   $comments = $commentInteractor->getCommentsByBlogId();
-} catch (Exception $e) {
+} catch ( Exception $e) {
   $_SESSION['errors'][] = $e->getMessage();
   Redirect::handler('index.php');
     exit;

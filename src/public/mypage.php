@@ -18,10 +18,10 @@ try {
     $mypageInput = new MypageInput($userId);
 
     // MypageInteractorのインスタンスを生成
-    $mypageInteractor = new MypageInteractor();
+    $mypageInteractor = new MypageInteractor($mypageInput);
 
     // InteractorにInputを渡して実行し、結果を取得
-    $mypageOutput = $mypageInteractor->handle($mypageInput);
+    $mypageOutput = $mypageInteractor->handle();
     $my_blogs = $mypageOutput->getBlogs();
 } catch (Exception $e) {
     $_SESSION['errors'][] = $e->getMessage();

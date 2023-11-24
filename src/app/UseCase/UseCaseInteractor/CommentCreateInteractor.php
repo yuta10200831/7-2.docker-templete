@@ -8,7 +8,7 @@ use App\UseCase\UseCaseOutput\CommentOutput;
 use App\Infrastructure\Dao\CommentDao;
 use App\Domain\ValueObject\Index\BlogId;
 
-final class CommentInteractor {
+final class CommentCreateInteractor {
 
     private $commentQueryService;
     private $commentDao;
@@ -21,10 +21,6 @@ final class CommentInteractor {
         $this->commentDao = new CommentDao();
         $this->commentQueryService = new CommentQueryService($this->commentDao);
         $this->input = $input;
-    }
-
-    public function getCommentsByBlogId() {
-        return $this->commentQueryService->findByBlogId($this->input->blogId());
     }
 
     public function handler(): CommentOutput {

@@ -4,7 +4,7 @@ use App\Infrastructure\Redirect\Redirect;
 use App\Domain\ValueObject\Index\BlogId;
 use App\Domain\ValueObject\Index\CommentText;
 use App\UseCase\UseCaseInput\CommentInput;
-use App\UseCase\UseCaseInteractor\CommentInteractor;
+use App\UseCase\UseCaseInteractor\CommentCreateInteractor;
 
 session_start();
 
@@ -26,7 +26,7 @@ try {
     // コメント処理
     $commentText = new CommentText($commentContent);
     $useCaseInput = new CommentInput($blogId, $commentText);
-    $useCase = new CommentInteractor($useCaseInput);
+    $useCase = new CommentCreateInteractor($useCaseInput);
     $useCaseOutput = $useCase->handler();
 
     if (!$useCaseOutput->isSuccess()) {
