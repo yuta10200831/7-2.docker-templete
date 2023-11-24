@@ -52,7 +52,6 @@ try {
     <p class="text-gray-500 mb-4"><?php echo htmlspecialchars($article->getCreatedAt()->format('Y-m-d H:i:s')); ?></p>
     <p class="mb-6 text-gray-700"><?php echo nl2br(htmlspecialchars($article->getContents()->getValue())); ?></p>
 
-
 <!-- 編集・削除ボタン -->
     <div class="flex space-x-4">
         <a href="edit.php?id=<?php echo $blog_id; ?>" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200">編集</a>

@@ -23,3 +23,4 @@ final class MypageInteractor
         return new MypageOutput($blogs);
     }
 }
+?>

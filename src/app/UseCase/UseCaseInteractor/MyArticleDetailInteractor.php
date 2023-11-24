@@ -24,5 +24,4 @@ final class MyArticleDetailInteractor
         return new MyArticleDetailOutput($article);
     }
 }
-
 ?>

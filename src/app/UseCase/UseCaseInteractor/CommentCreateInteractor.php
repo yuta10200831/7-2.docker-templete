@@ -13,7 +13,6 @@ final class CommentCreateInteractor {
     private $commentQueryService;
     private $commentDao;
     private $input;
-
     private const ALREADY_EXISTS_MESSAGE = 'コメントがすでに存在します。';
     private const COMPLETED_MESSAGE = 'コメントを保存しました。';
 

@@ -19,3 +19,4 @@ class CommentText {
         return $this->value;
     }
 }
+?>

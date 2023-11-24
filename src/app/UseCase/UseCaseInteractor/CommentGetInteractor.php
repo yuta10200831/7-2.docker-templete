@@ -19,5 +19,4 @@ final class CommentGetInteractor {
         return $this->commentQueryService->findByBlogId($this->input->blogId());
     }
 }
-
 ?>

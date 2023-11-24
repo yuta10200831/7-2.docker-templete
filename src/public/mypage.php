@@ -28,7 +28,6 @@ try {
     Redirect::handler('index.php');
     exit;
 }
-
 ?>
 
 <!DOCTYPE html>
