@@ -1,18 +1,18 @@
 <?php
 namespace App\Domain\ValueObject;
 
-class BlogID {
-    private $blogID;
+class BlogId {
+    private $blogId;
 
-    public function __construct($blogID) {
-        if (empty($blogID)) {
+    public function __construct($blogId) {
+        if (empty($blogId)) {
             throw new \InvalidArgumentException('BlogIDが入力されていません');
         }
-        $this->blogID = $blogID;
+        $this->blogId = $blogId;
     }
 
     public function getValue() {
-        return $this->blogID;
+        return $this->blogId;
     }
 }
 

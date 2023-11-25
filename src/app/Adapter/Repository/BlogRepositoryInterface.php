@@ -1,4 +1,5 @@
 <?php
+// Readをmarge後に修正
 namespace App\Adapter\Repository;
 
 use App\Domain\Entity\Blog;
@@ -8,3 +9,4 @@ interface BlogRepositoryInterface {
     public function findById(int $id): ?Blog;
     public function deleteById(int $id): bool;
 }
+?>

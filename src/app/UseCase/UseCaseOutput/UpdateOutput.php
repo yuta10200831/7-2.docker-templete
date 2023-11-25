@@ -1,7 +1,7 @@
 <?php
 namespace App\UseCase\UseCaseOutput;
 
-class UpdatePostOutputData {
+class UpdatePostOutput {
     public $result;
 
     public function __construct($result) {
