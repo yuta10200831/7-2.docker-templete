@@ -1,12 +1,14 @@
 <?php
+
 namespace App\Infrastructure\Dao;
-
+require_once __DIR__ . '/../../../vendor/autoload.php';
 use App\Domain\Entity\Post;
-use App\Adapter\Repository\PostRepositoryInterface;
-use PDO;
-use PDOException;
+use \PDO;
 
-class PostRepositoryMySQLImpl implements PostRepositoryInterface {
+
+//blog情報を操作するDao
+final class PostDao
+{
     private $pdo;
 
     public function __construct()
@@ -22,17 +24,22 @@ class PostRepositoryMySQLImpl implements PostRepositoryInterface {
         }
     }
 
-    public function save(Post $post) {
-
+    //DBへblogの登録をする
+    public function save(Post $post): int
+    {
         $sql = "INSERT INTO blogs (title, contents, user_id) VALUES (:title, :contents, :user_id)";
         $stmt = $this->pdo->prepare($sql);
 
-        $stmt->bindParam(':title', $post->getTitle());
-        $stmt->bindParam(':contents', $post->getContents());
-        $stmt->bindParam(':user_id', $post->getUserId());
+        $title = $post->title()->getValue();
+        $contents = $post->contents()->getValue();
+        $user_id = $post->userId();
+
+        $stmt->bindParam(':title', $title);
+        $stmt->bindParam(':contents', $contents);
+        $stmt->bindParam(':user_id', $user_id);
 
         $stmt->execute();
-
         return $this->pdo->lastInsertId();
     }
 }
+?>
