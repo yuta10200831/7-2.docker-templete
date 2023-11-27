@@ -1,32 +1,39 @@
 <?php
+require_once __DIR__ . '/../vendor/autoload.php';
+use App\UseCase\UseCaseInteractor\IndexInteractor;
+use App\UseCase\UseCaseInput\IndexInput;
+use App\Infrastructure\Redirect\Redirect;
+
 session_start();
 
-// データベースに接続
-$pdo = new PDO('mysql:host=mysql; dbname=blog; charset=utf8', 'root', 'password');
-
-// 検索キーワードと並び順の初期値を設定
-$search_keyword = $_GET['search'] ?? '';
-$order = $_GET['order'] ?? 'new'; // デフォルトは新しい順
-
-// SQLクエリの準備
-$sql = "SELECT id, title, LEFT(contents, 15) AS short_contents, created_at FROM blogs";
-$placeholders = [];
-
-if ($search_keyword) {
-    $sql .= " WHERE title LIKE :search OR contents LIKE :search";
-    $placeholders[':search'] = '%' . $search_keyword . '%';
+// ログインチェック
+if (!isset($_SESSION['user']['name'])) {
+    header('Location: login.php');
+    exit;
 }
 
-if ($order === 'new') {
-    $sql .= " ORDER BY created_at DESC";
-} elseif ($order === 'old') {
-    $sql .= " ORDER BY created_at ASC";
+// ユーザーIDのチェック
+if (!isset($_SESSION['user']['id'])) {
+    header('Location: create.php');
+    exit;
 }
 
-$stmt = $pdo->prepare($sql);
-$stmt->execute($placeholders);
-$blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+try {
+    // IndexInputのインスタンスを生成
+    $indexInput = new IndexInput($_GET['search'] ?? null, $_GET['order'] ?? 'new', $_SESSION['user']['id']);
 
+    // IndexInteractorのインスタンスを生成
+    $indexInteractor = new IndexInteractor($indexInput);
+
+    // Interactorを実行し、結果を取得
+    $indexOutput = $indexInteractor->handle();
+    $blogs = $indexOutput->getBlogs();
+} catch (Exception $e) {
+    // エラー処理
+    $_SESSION['errors'][] = $e->getMessage();
+    Redirect::handler('error.php');
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -80,10 +87,10 @@ $blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <?php foreach ($blogs as $blog): ?>
         <div class="bg-white rounded-lg shadow p-4">
             <div class="p-4">
-                <h2 class="text-lg font-semibold mt-2"><?php echo htmlspecialchars($blog['title']); ?></h2>
-                <p class="text-gray-600 mt-2"><?php echo htmlspecialchars($blog['short_contents']); ?>...</p>
-                <p class="text-gray-500 mt-2"><?php echo htmlspecialchars($blog['created_at']); ?></p>
-                <a href="detail.php?id=<?php echo htmlspecialchars($blog['id']); ?>" class="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">記事詳細へ</a>
+                <h2 class="text-lg font-semibold mt-2"><?php echo htmlspecialchars($blog->getTitle()); ?></h2>
+                <p class="text-gray-600 mt-2"><?php echo htmlspecialchars($blog->getContents()); ?>...</p>
+                <p class="text-gray-500 mt-2"><?php echo htmlspecialchars($blog->getCreatedAt()); ?></p>
+                <a href="detail.php?id=<?php echo htmlspecialchars($blog->getId()); ?>" class="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">記事詳細へ</a>
             </div>
         </div>
         <?php endforeach; ?>

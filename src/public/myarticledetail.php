@@ -1,36 +1,37 @@
 <?php
+require_once __DIR__ . '/../vendor/autoload.php';
+use App\Domain\ValueObject\User\UserId;
+use App\Domain\ValueObject\Index\BlogId;
+use App\UseCase\UseCaseInput\MyArticleDetailInput;
+use App\UseCase\UseCaseInteractor\MyArticleDetailInteractor;
+use App\Infrastructure\Redirect\Redirect;
+
 session_start();
 
-// ログインチェック
-if (!isset($_SESSION['username'])) {
-    header('Location: login.php');
-    exit;
+if (!isset($_SESSION['user']['id'])) {
+    throw new Exception('ログインが必要です。');
 }
 
-// ユーザーIDのチェック
-if (!isset($_SESSION['user_id'])) {
-    header('Location: create.php');
-    exit;
+$userId = new UserId($_SESSION['user']['id']);
+$blogIdValue = $_GET['id'] ?? null;
+
+if ($blogIdValue === null || !is_numeric($blogIdValue) || $blogIdValue <= 0) {
+    throw new Exception('不正なブログIDです。');
 }
 
-$pdo = new PDO('mysql:host=mysql; dbname=blog; charset=utf8', 'root', 'password');
+try {
 
-$blog_id = $_GET['id'] ?? null;
-
-$stmt = $pdo->prepare("SELECT * FROM blogs WHERE id = ?");
-$stmt->execute([$blog_id]);
-$blog = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$blog) {
-    header('Location: my_page.php');
-    exit;
-}
-
-// 投稿の削除処理
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] === 'delete') {
-    $stmt = $pdo->prepare("DELETE FROM blogs WHERE id = ?");
-    $stmt->execute([$blog_id]);
-    header('Location: my_page.php');
+    $blogId = new BlogId((int)$blogIdValue);
+    $input = new MyArticleDetailInput($userId, $blogId);
+    $interactor = new MyArticleDetailInteractor($input);
+    $output = $interactor->handle();
+    $article = $output->getBlogs();
+    if (!$article) {
+        throw new Exception('記事が見つかりませんでした。');
+    }
+} catch (Exception $e) {
+    $_SESSION['errors'][] = $e->getMessage();
+    Redirect::handler('mypage.php');
     exit;
 }
 ?>
@@ -47,17 +48,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
 
 <main class="container mx-auto mt-10 p-4 max-w-2xl bg-white rounded-lg shadow-lg">
     <!-- 記事の表示 -->
-    <h2 class="text-2xl font-bold mb-4"><?php echo htmlspecialchars($blog['title']); ?></h2>
-    <p class="text-gray-500 mb-4"><?php echo htmlspecialchars($blog['created_at']); ?></p>
-    <p class="mb-6 text-gray-700"><?php echo nl2br(htmlspecialchars($blog['contents'])); ?></p>
+    <h2 class="text-2xl font-bold mb-4"><?php echo htmlspecialchars($article->getTitle()->getValue()); ?></h2>
+    <p class="text-gray-500 mb-4"><?php echo htmlspecialchars($article->getCreatedAt()->format('Y-m-d H:i:s')); ?></p>
+    <p class="mb-6 text-gray-700"><?php echo nl2br(htmlspecialchars($article->getContents()->getValue())); ?></p>
 
 <!-- 編集・削除ボタン -->
     <div class="flex space-x-4">
-      <a href="edit.php?id=<?php echo $blog_id; ?>" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200">編集</a>
-      <form action="post/delete.php" method="POST">
+        <a href="edit.php?id=<?php echo $blog_id; ?>" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200">編集</a>
+        <form action="post/delete.php" method="POST">
         <input type="hidden" name="id" value="<?php echo $blog_id; ?>">
-        <button type="submit" onclick="return confirm('本当に削除しますか？');" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-200">削除</button>
-      </form>
+        <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-200">削除</button>
+        </form>
         <a href="mypage.php" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition duration-200">マイページへ戻る</a>
     </div>
 </main>
