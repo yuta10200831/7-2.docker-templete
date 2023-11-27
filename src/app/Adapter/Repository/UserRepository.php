@@ -21,4 +21,10 @@ final class UserRepository
     {
         $this->userDao->create($user);
     }
+
+    public function getLastInsertId(): int
+    {
+        return $this->userDao->lastInsertId();
+    }
 }
+?>

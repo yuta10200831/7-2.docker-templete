@@ -13,8 +13,6 @@ use App\Domain\ValueObject\HashedPassword;
 use App\Domain\ValueObject\RegistrationDate;
 use App\Domain\ValueObject\User\UserId;
 
-
-
 final class UserQueryServise
 {
     private $userDao;
@@ -32,16 +30,14 @@ final class UserQueryServise
         if (is_null($userMapper)) {
             return null;
         }
-
         $userAgeMapper = $this->userAgeDao->fetchAll((int)$userMapper['id']);
-
 
         if (is_null($userAgeMapper) || !isset($userAgeMapper['age'])) {
             throw new \Exception('Age is null or not set');
         }
 
         $age = new Age((int)$userAgeMapper['age']);
-        $registrationDate = new RegistrationDate($userMapper['registration_date']);
+        $registrationDate = new RegistrationDate($userMapper['created_at']);
 
         return new User(
             new UserId($userMapper['id']),

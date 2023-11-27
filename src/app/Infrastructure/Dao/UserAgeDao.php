@@ -51,7 +51,7 @@ final class UserAgeDao
         $statement->bindValue(
             ':user_id',
             $userAge->id()->value(),
-            PDO::PARAM_STR
+            PDO::PARAM_INT
         );
         $statement->bindValue(':age', $userAge->age()->value(), PDO::PARAM_INT);
         $statement->execute();
@@ -66,7 +66,7 @@ final class UserAgeDao
     public function fetchAll(int $userId): ?array
     {
         $sql = sprintf(
-            'SELECT * FROM %s WHERE user_id = :user_id',
+            'SELECT * FROM %s WHERE user_id',
             self::TABLE_NAME
         );
         $statement = $this->pdo->prepare($sql);
@@ -74,7 +74,6 @@ final class UserAgeDao
         $statement->execute();
 
         $userAge = $statement->fetch(PDO::FETCH_ASSOC);
-
 
         return $userAge === false ? null : $userAge;
     }

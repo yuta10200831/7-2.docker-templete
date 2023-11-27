@@ -3,7 +3,7 @@
 namespace App\Domain\Entity;
 require_once __DIR__ . '/../../../vendor/autoload.php';
 use App\Domain\ValueObject\User\UserId;
-use App\Domain\ValueObject\User\Age;
+use App\Domain\ValueObject\Age;
 
 /**
  * ユーザーのEntity
@@ -28,9 +28,6 @@ final class UserAge
      */
     public function __construct(UserId $id, Age $age)
     {
-        echo "<!--";
-        var_dump($age);
-        echo "-->";
         $this->id = $id;
         $this->age = $age;
     }

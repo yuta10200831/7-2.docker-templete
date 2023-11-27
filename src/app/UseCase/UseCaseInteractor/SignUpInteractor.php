@@ -8,7 +8,9 @@ use App\UseCase\UseCaseOutput\SignUpOutput;
 use App\Domain\ValueObject\User\NewUser;
 use App\Domain\Entity\UserAge;
 use App\Domain\Entity\User;
+use App\Domain\ValueObject\User\UserId;
 use App\Infrastructure\Dao\UserAgeDao;
+use App\Infrastructure\Dao\UserDao;
 
 /**
  * ユーザー登録ユースケース
@@ -44,6 +46,10 @@ final class SignUpInteractor
     */
     private $userAgeDao;
 
+    /* @var UserDao
+    */
+    private $userDao;
+
     /**
      * コンストラクタ
      *
@@ -54,6 +60,7 @@ final class SignUpInteractor
         $this->userRepository = new UserRepository();
         $this->userQueryServise = new UserQueryServise();
         $this->userAgeDao = new UserAgeDao();
+        $this->userDao = new UserDao();
         $this->input = $input;
     }
 
@@ -103,8 +110,7 @@ final class SignUpInteractor
      */
     private function signup(): void
     {
-        // userRepositoryでusersテーブルに登録し、新規登録されたユーザーIDを取得
-        $newUserId = $this->userRepository->insert(
+        $this->userDao->create(
             new NewUser(
                 $this->input->name(),
                 $this->input->email(),
@@ -112,11 +118,14 @@ final class SignUpInteractor
             )
         );
 
-        // 新規登録されたユーザーIDを使って、userAgeDaoでusers_ageテーブルにも登録
-        if ($newUserId > 0) {
-            $this->userAgeDao->create(
-                new UserAge(new UserId($newUserId), $this->input->age())
-            );
+        $newUserId = $this->userRepository->getLastInsertId();
+        if ($newUserId === null) {
+            throw new \Exception("ユーザーIDの取得に失敗しました。");
         }
+
+        $this->userAgeDao->create(
+            new UserAge(new UserId($newUserId), $this->input->age())
+        );
     }
 }
+?>
