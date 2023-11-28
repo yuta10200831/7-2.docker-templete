@@ -110,7 +110,7 @@ final class SignUpInteractor
      */
     private function signup(): void
     {
-        $this->userDao->create(
+        $this->userRepository->insert(
             new NewUser(
                 $this->input->name(),
                 $this->input->email(),
@@ -119,11 +119,8 @@ final class SignUpInteractor
         );
 
         $newUserId = $this->userRepository->getLastInsertId();
-        if ($newUserId === null) {
-            throw new \Exception("ユーザーIDの取得に失敗しました。");
-        }
 
-        $this->userAgeDao->create(
+        $this->userRepository->insertAge(
             new UserAge(new UserId($newUserId), $this->input->age())
         );
     }

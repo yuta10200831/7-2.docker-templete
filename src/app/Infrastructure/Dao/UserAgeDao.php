@@ -78,3 +78,4 @@ final class UserAgeDao
         return $userAge === false ? null : $userAge;
     }
 }
+?>

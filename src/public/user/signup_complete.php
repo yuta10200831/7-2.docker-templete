@@ -11,6 +11,8 @@ use App\UseCase\UseCaseInput\SignUpInput;
 use App\UseCase\UseCaseInteractor\SignUpInteractor;
 use App\Infrastructure\Dao\UserDao;
 use App\Infrastructure\Dao\UserAgeDao;
+use App\Domain\Entity\UserAge;
+use App\Domain\ValueObject\User\UserId;
 
 $name = filter_input(INPUT_POST, 'name');
 $email = filter_input(INPUT_POST, 'email');

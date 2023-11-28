@@ -118,17 +118,20 @@ final class SignInInteractor
     */
     private function createUserEntity(User $user): ?User
     {
-        $userAge = $this->userAgeDao->fetchAll($user->id()->value());
+        $userId = $user->id()->value();
+        $userAge = $this->userAgeDao->fetchAll($userId);
+
         if ($userAge === null) {
             return null;
         }
+
         return new User(
-            new UserId($user->id()->value()),
-            new UserName($user->name()->value()),
-            new Email($user->email()->value()),
-            new HashedPassword($user->password()->value()),
+            $user->id(),
+            $user->name(),
+            $user->email(),
+            $user->password(),
             new Age($userAge['age']),
-            new RegistrationDate($user->createdAt()->value())
+            $user->registrationDate()
         );
     }
 
