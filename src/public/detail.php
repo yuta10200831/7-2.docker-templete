@@ -1,37 +1,36 @@
 <?php
+require_once __DIR__ . '/../vendor/autoload.php';
+use App\UseCase\UseCaseInteractor\CommentGetInteractor;
+use App\UseCase\UseCaseInteractor\DetailInteractor;
+use App\UseCase\UseCaseInput\CommentInput;
+use App\UseCase\UseCaseInput\DetailInput;
+use App\Infrastructure\Redirect\Redirect;
+use App\Domain\ValueObject\User\UserId;
+use App\Domain\ValueObject\Index\BlogId;
+use App\Domain\ValueObject\Index\CommentText;
+
 session_start();
 
-// ログインチェック
-if (!isset($_SESSION['username'])) {
-  header('Location: user/signin.php');
-  exit;
-}
-
-// ユーザーIDのチェック
-if (!isset($_SESSION['user_id'])) {
-  header('Location: user/signin.php');
-  exit;
-}
-
-$pdo = new PDO('mysql:host=mysql; dbname=blog; charset=utf8', 'root', 'password');
-
-$blog_id = $_GET['id'] ?? null;
-
-$stmt = $pdo->prepare("SELECT * FROM blogs WHERE id = ?");
-$stmt->execute([$blog_id]);
-$blog = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$blog) {
-    header('Location: index.php');
+try {
+  // 記事の取得
+  $getBlogId = $_GET['id'];
+  $blogId = new BlogId((int)$getBlogId);
+  $userId = new UserId($_SESSION['user']['id']);
+  $input = new DetailInput($userId, $blogId);
+  $interactor = new DetailInteractor($input);
+  $output = $interactor->handle();
+  $detail = $output->getBlogs();
+  if (!$detail) {
+      throw new Exception('記事が見つかりませんでした。');
+  }
+  // コメントの取得
+  $commentInteractor = new CommentGetInteractor(new CommentInput($blogId, new CommentText('')));
+  $comments = $commentInteractor->getCommentsByBlogId();
+} catch ( Exception $e) {
+  $_SESSION['errors'][] = $e->getMessage();
+  Redirect::handler('index.php');
     exit;
 }
-
-$error_message = $_SESSION['error'] ?? ''; 
-unset($_SESSION['error']); 
-
-$stmt = $pdo->prepare("SELECT * FROM comments WHERE blog_id = ? ORDER BY created_at DESC");
-$stmt->execute([$blog_id]);
-$comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -40,15 +39,15 @@ $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.17/dist/tailwind.min.css" rel="stylesheet">
-    <title>記事詳細 - <?php echo htmlspecialchars($blog['title']); ?></title>
+    <title>記事詳細 - <?php echo htmlspecialchars($detail->getTitle()->getValue()); ?></title>
 </head>
 
 <body class="bg-gray-100">
     <main class="container mx-auto mt-10">
         <article class="bg-white rounded-lg shadow p-4 mb-8">
-            <h1 class="text-2xl font-semibold mb-4"><?php echo htmlspecialchars($blog['title']); ?></h1>
-            <p class="text-gray-500 mb-4"><?php echo htmlspecialchars($blog['created_at']); ?></p>
-            <div><?php echo nl2br(htmlspecialchars($blog['contents'])); ?></div>
+            <h1 class="text-2xl font-semibold mb-4"><?php echo htmlspecialchars($detail->getTitle()->getValue()); ?></h1>
+            <p class="text-gray-500 mb-4"><?php echo htmlspecialchars($detail->getCreatedAt()->format('Y-m-d H:i:s')); ?></p>
+            <div><?php echo htmlspecialchars($detail->getContents()->getValue()); ?></div>
             <div class="mt-4">
               <a href="index.php" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">記事一覧へ戻る</a>
             </div>
@@ -65,9 +64,10 @@ $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
           </div>
         <?php endif; ?>
 
-            <?php if (isset($_SESSION['user_id'])): ?>
-            <form action="comment/store.php?id=<?php echo $blog_id; ?>" method="post" class="mb-6">
+            <?php if (isset($_SESSION['user']['id'])): ?>
+            <form action="comment/store.php" method="post" class="mb-6">
               <textarea name="comments" rows="4" class="w-1/4 p-2 border border-blue-500 rounded"></textarea>
+              <input type="hidden" value="<?php echo $getBlogId; ?>" name="blogId" />
               <input type="submit" value="コメントする" class="mt-2 block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
             </form>
             <?php else: ?>
@@ -76,17 +76,17 @@ $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             <!-- コメントの表示 -->
             <ul>
-            <h2 class="text-xl font-bold">コメント一覧</h2>
+              <h2 class="text-xl font-bold">コメント一覧</h2>
               <br>
-            <?php foreach ($comments as $comment): ?>
-            <div class="mb-6">
-              <p class="text-gray-600"><?php echo nl2br(htmlspecialchars($comment['comments'])); ?></p>
-              <small class="text-gray-400"><?php echo htmlspecialchars($comment['created_at']); ?></small>
-              <p class="text-gray-600"><?php echo nl2br(htmlspecialchars($comment['commenter_name'])); ?></p>
-            <div class="h-1 bg-green-500 w-1/4 mt-2"></div>
-            </div>
-            <?php endforeach; ?>
-            </ul>
+                  <div class="mb-6">
+                  <?php foreach ($comments as $comment): ?>
+                      <p class="text-gray-600"><?php echo nl2br(htmlspecialchars($comment->getComment())); ?></p>
+                      <small class="text-gray-400"><?php echo htmlspecialchars($comment->getCreatedAt()); ?></small>
+                      <p class="text-gray-600"><?php echo nl2br(htmlspecialchars($comment->getCommenterName())); ?></p>
+                      <div class="h-1 bg-green-500 w-1/4 mt-2"></div>
+                  <?php endforeach; ?>
+                  </div>
+          </ul>
         </section>
     </main>
 </body>
