@@ -119,10 +119,10 @@ final class SignUpInteractor
         );
 
         $newUserId = $this->userRepository->getLastInsertId();
-
         $this->userRepository->insertAge(
             new UserAge(new UserId($newUserId), $this->input->age())
         );
+
     }
 }
 ?>

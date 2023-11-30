@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $pdo = new PDO('mysql:host=mysql; dbname=blog; charset=utf8', 'root', 'password');
         $stmt = $pdo->prepare("INSERT INTO blogs (title, contents, user_id) VALUES (?, ?, ?)");
         $stmt->execute([$title, $contents, $user_id]);
-        // 後程mypageへ変更
+
         header("Location: /index.php");
         exit;
     }
@@ -61,6 +61,5 @@ $pdo = new PDO('mysql:host=mysql; dbname=blog; charset=utf8', 'root', 'password'
 $stmt = $pdo->prepare("INSERT INTO blogs (title, contents, user_id) VALUES (?, ?, ?)");
 $stmt->execute([$title, $contents, $user_id]);
 
-// 後程mypageへ変更
 header("Location: /index.php");
 exit;

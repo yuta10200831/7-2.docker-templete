@@ -34,9 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return;
     }
 
-    $stmt = $pdo->prepare("INSERT INTO users (name, email, age, password) VALUES (?, ?, ?, ?)");
-    $stmt->execute([$username, $email, $age, $password]) or die(print_r($stmt->errorInfo(), true));
-
     header('Location: signin.php');
     exit;
 }
