@@ -39,7 +39,7 @@ final class UserId
     }
 
     /**
-     * 1以上かどうかを判定する
+     * 0以上かどうかを判定する
      *
      * @param string $value
      * @return boolean
