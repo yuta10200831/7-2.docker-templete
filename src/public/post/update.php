@@ -1,20 +1,32 @@
 <?php
+require_once __DIR__ . '/../../vendor/autoload.php';
+
 session_start();
 
-$pdo = new PDO('mysql:host=mysql; dbname=blog; charset=utf8', 'root', 'password');
+use App\UseCase\UseCaseInput\UpdatePostInputData;
+use App\UseCase\UseCaseInteractor\UpdatePostInteractor;
+use App\Infrastructure\Dao\BlogRepositoryMySQLImpl;
+
+$blogRepo = new BlogRepositoryMySQLImpl();
+$updatePostInteractor = new UpdatePostInteractor($blogRepo);
 
 $blog_id = $_POST['id'] ?? null;
 $title = $_POST['title'] ?? '';
 $contents = $_POST['contents'] ?? '';
-
-if (!$blog_id || !$title || !$contents) {
-    header('Location: mypage.php');
+$user_id = $_SESSION['user']['id'] ?? '';
+if (!$blog_id || !$title || !$contents || !$user_id) {
+    header('Location: /mypage.php');
     exit;
 }
 
-$stmt = $pdo->prepare("UPDATE blogs SET title = ?, contents = ? WHERE id = ?");
-$stmt->execute([$title, $contents, $blog_id]);
+$inputData = new UpdatePostInputData($blog_id, $title, $contents, $user_id);
+$outputData = $updatePostInteractor->handle($inputData);
 
-header("Location: /detail_my_page.php?id={$blog_id}");
-exit;
-?>
+if ($outputData->result) {
+    header("Location: /myarticledetail.php?id={$blog_id}");
+    exit;
+} else {
+    // エラー処理
+    header('Location: /mypage.php');
+    exit;
+}
