@@ -8,7 +8,7 @@ use Exception;
  */
 final class UserId
 {
-    const MIN_VALUE = 1;
+    const MIN_VALUE = 0;
     const INVALID_MESSAGE = '不正な値です';
 
     /**
@@ -23,7 +23,8 @@ final class UserId
      */
     public function __construct(int $value)
     {
-        if ($this->isInvalid($value)) {
+        if ($this->isInvalid($value))
+        {
             throw new Exception(self::INVALID_MESSAGE);
         }
         $this->value = $value;
@@ -48,3 +49,4 @@ final class UserId
         return $value < self::MIN_VALUE;
     }
 }
+?>
