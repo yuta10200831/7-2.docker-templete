@@ -1,26 +1,10 @@
 <?php
 session_start();
 
-$error_message = is_array($_SESSION['errors']) ? implode('<br>', $_SESSION['errors']) : $_SESSION['errors'] ?? '';
-unset($_SESSION['errors']);
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim($_POST['email'] ?? '');
-    $password = trim($_POST['password'] ?? '');
-    $confirmPassword = trim($_POST['confirmPassword'] ?? '');
-
-    $input = new SignUpInput($email, $password, $confirmPassword);
-    $interactor = new SignUpInteractor($input);
-    $output = $interactor->handle();
-
-    if (!$output->isSuccess()) {
-        $_SESSION['errors'] = $output->message();
-        $error_message = $_SESSION['errors'];
-        return;
-    }
-
-    header('Location: signin.php');
-    exit;
+$error_message = '';
+if (isset($_SESSION['errors'])) {
+    $error_message = is_array($_SESSION['errors']) ? implode('<br>', $_SESSION['errors']) : $_SESSION['errors'];
+    unset($_SESSION['errors']);
 }
 ?>
 
