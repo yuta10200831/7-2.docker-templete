@@ -8,7 +8,9 @@ use Exception;
  */
 final class UserId
 {
-    const MIN_VALUE = 0;
+    // 下記は後ほど削除、=0が正
+    const MIN_VALUE = 1;
+    // const MIN_VALUE = 0;
     const INVALID_MESSAGE = '不正な値です';
 
     /**

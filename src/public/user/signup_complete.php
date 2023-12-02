@@ -56,9 +56,9 @@ try {
     if (!$useCaseOutput->isSuccess()) {
         throw new Exception($useCaseOutput->message());
     }
-    $lastUserId = $userDao->getPdo()->lastInsertId();
-    $userAgeObject = new UserAge(new UserId($lastUserId), new Age($age));
-    $userAgeDao->create($userAgeObject);
+    // $lastUserId = $userDao->getPdo()->lastInsertId();
+    // $userAgeObject = new UserAge(new UserId($lastUserId), new Age($age));
+    // $userAgeDao->create($userAgeObject);
 
     $_SESSION['message'] = $useCaseOutput->message();
     Redirect::handler('signin.php');

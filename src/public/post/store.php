@@ -12,7 +12,6 @@ session_start();
 
 $user_id = $_SESSION['user']['id'] ?? null;
 
-<<<<<<< HEAD
 // ユーザーIDのチェック
 if (!isset($_SESSION['user_id'])) {
     header('Location: /create.php');
@@ -45,12 +44,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 // ユーザーIDのチェック
 if (!isset($_SESSION['user_id'])) {
     header('Location: /create.php');
-=======
+}
 //ログインチェック
 if (empty($user_id)) {
     $_SESSION['error'] = "ログインが必要です";
     header('Location: /user/signin.php');
->>>>>>> 95e120ed5b299472ad87172228e9f90b09dde7e4
     exit;
 }
 
@@ -77,10 +75,9 @@ try {
     $createUseCase = new CreatePostInteractor($createUseCaseInput);
     $createPostOutput = $createUseCase->handle();
 
-<<<<<<< HEAD
 header("Location: /index.php");
 exit;
-=======
+
     if (!$createPostOutput->isSuccess()) {
         throw new Exception($createPostOutput->message());
     }
@@ -93,4 +90,3 @@ exit;
     exit;
 }
 ?>
->>>>>>> 95e120ed5b299472ad87172228e9f90b09dde7e4
