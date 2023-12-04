@@ -25,6 +25,8 @@ try {
     // IndexInteractorのインスタンスを生成
     $indexInteractor = new IndexInteractor($indexInput);
 
+    $memberStatus = $_SESSION['user']['memberStatus'];
+
     // Interactorを実行し、結果を取得
     $indexOutput = $indexInteractor->handle();
     $blogs = $indexOutput->getBlogs();
@@ -51,6 +53,7 @@ try {
     <div class="container mx-auto flex justify-between items-center">
         <div>
             <h2 class="text-xl font-semibold"><?php echo isset($_SESSION['user']['name']) ? "こんにちは！{$_SESSION['user']['name']}さん" : "ゲストさん、こんにちは！"; ?></h2>
+            <p><?php echo $memberStatus; ?></p>
         </div>
         <div>
             <a href="/" class="mx-2 text-blue-500 hover:text-blue-700">ホーム</a>

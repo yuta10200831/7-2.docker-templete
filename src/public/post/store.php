@@ -12,6 +12,39 @@ session_start();
 
 $user_id = $_SESSION['user']['id'] ?? null;
 
+// ユーザーIDのチェック
+if (!isset($_SESSION['user_id'])) {
+    header('Location: /create.php');
+    exit;
+}
+$user_id = $_SESSION['user_id'];
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $title = $_POST['title'] ?? '';
+    $contents = $_POST['contents'] ?? '';
+
+    if (empty($title) || empty($contents)) {
+        $_SESSION['error'] = "タイトルか内容の入力がありません";
+        header('Location: /create.php');
+        exit;
+    } else {
+        $pdo = new PDO('mysql:host=mysql; dbname=blog; charset=utf8', 'root', 'password');
+        $stmt = $pdo->prepare("INSERT INTO blogs (title, contents, user_id) VALUES (?, ?, ?)");
+        $stmt->execute([$title, $contents, $user_id]);
+
+        header("Location: /index.php");
+        exit;
+    }
+} else {
+    // POSTリクエスト以外でこのページが呼び出された場合、create.phpにリダイレクトする。
+    header('Location: /create.php');
+    exit;
+}
+
+// ユーザーIDのチェック
+if (!isset($_SESSION['user_id'])) {
+    header('Location: /create.php');
+}
 //ログインチェック
 if (empty($user_id)) {
     $_SESSION['error'] = "ログインが必要です";
@@ -41,6 +74,9 @@ try {
     $createUseCaseInput = new CreatePostInput($titleVo, $contentsVo, $user_id);
     $createUseCase = new CreatePostInteractor($createUseCaseInput);
     $createPostOutput = $createUseCase->handle();
+
+header("Location: /index.php");
+exit;
 
     if (!$createPostOutput->isSuccess()) {
         throw new Exception($createPostOutput->message());

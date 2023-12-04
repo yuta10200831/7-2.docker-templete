@@ -8,6 +8,7 @@ unset($_SESSION['errors']);
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $email = trim($_POST['email'] ?? '');
+    $age = trim($_POST['age'] ?? '');
     $password = trim($_POST['password'] ?? '');
     $confirmPassword = trim($_POST['confirmPassword'] ?? '');
 
@@ -33,8 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return;
     }
 
-    $stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
-    $stmt->execute([$username, $email, $password]) or die(print_r($stmt->errorInfo(), true));
     header('Location: signin.php');
     exit;
 }
@@ -58,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <form action="signup_complete.php" method="post">
     <input type="text" name="name" placeholder="User name"><br>
     <input type="text" name="email" placeholder="Email"><br>
+    <input class='border-2 border-gray-300 w-full mb-5' placeholder="Age" type="text" name="age"><br>
     <input type="password" name="password" placeholder="Password"><br>
     <input type="password" name="confirm_password" placeholder="Password確認"><br>
     <input type="submit" value="アカウント作成">

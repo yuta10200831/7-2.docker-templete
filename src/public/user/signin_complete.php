@@ -4,6 +4,7 @@ use App\Infrastructure\Redirect\Redirect;
 use App\Domain\ValueObject\Email;
 use App\Domain\ValueObject\InputPassword;
 use App\UseCase\UseCaseInput\SignInInput;
+use App\Infrastructure\Dao\UserAgeDao;
 use App\UseCase\UseCaseInteractor\SignInInteractor;
 
 session_start();
@@ -18,6 +19,7 @@ try {
     $inputPassword = new InputPassword($password);
     $useCaseInput = new SignInInput($userEmail, $inputPassword);
     $useCase = new SignInInteractor($useCaseInput);
+    $userAgeDao = new UserAgeDao();
     $useCaseOutput = $useCase->handler();
 
     if (!$useCaseOutput->isSuccess()) {

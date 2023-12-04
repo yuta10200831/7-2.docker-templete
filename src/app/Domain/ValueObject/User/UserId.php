@@ -8,7 +8,9 @@ use Exception;
  */
 final class UserId
 {
+    // 下記は後ほど削除、=0が正
     const MIN_VALUE = 1;
+    // const MIN_VALUE = 0;
     const INVALID_MESSAGE = '不正な値です';
 
     /**
@@ -23,7 +25,8 @@ final class UserId
      */
     public function __construct(int $value)
     {
-        if ($this->isInvalid($value)) {
+        if ($this->isInvalid($value))
+        {
             throw new Exception(self::INVALID_MESSAGE);
         }
         $this->value = $value;
@@ -38,7 +41,7 @@ final class UserId
     }
 
     /**
-     * 1以上かどうかを判定する
+     * 0以上かどうかを判定する
      *
      * @param string $value
      * @return boolean
@@ -48,3 +51,4 @@ final class UserId
         return $value < self::MIN_VALUE;
     }
 }
+?>

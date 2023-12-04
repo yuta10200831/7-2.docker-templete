@@ -6,7 +6,11 @@ use App\Adapter\Repository\UserRepository;
 use App\UseCase\UseCaseInput\SignUpInput;
 use App\UseCase\UseCaseOutput\SignUpOutput;
 use App\Domain\ValueObject\User\NewUser;
+use App\Domain\Entity\UserAge;
 use App\Domain\Entity\User;
+use App\Domain\ValueObject\User\UserId;
+use App\Infrastructure\Dao\UserAgeDao;
+use App\Infrastructure\Dao\UserDao;
 
 /**
  * ユーザー登録ユースケース
@@ -38,6 +42,14 @@ final class SignUpInteractor
      */
     private $input;
 
+    /* @var UserAgeDao
+    */
+    private $userAgeDao;
+
+    /* @var UserDao
+    */
+    private $userDao;
+
     /**
      * コンストラクタ
      *
@@ -47,6 +59,8 @@ final class SignUpInteractor
     {
         $this->userRepository = new UserRepository();
         $this->userQueryServise = new UserQueryServise();
+        $this->userAgeDao = new UserAgeDao();
+        $this->userDao = new UserDao();
         $this->input = $input;
     }
 
@@ -103,5 +117,12 @@ final class SignUpInteractor
                 $this->input->password()
             )
         );
+
+        $newUserId = $this->userRepository->getLastInsertId();
+        $this->userRepository->insertAge(
+            new UserAge(new UserId($newUserId), $this->input->age())
+        );
+
     }
 }
+?>

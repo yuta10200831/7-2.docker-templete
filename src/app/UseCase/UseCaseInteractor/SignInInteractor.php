@@ -3,9 +3,15 @@
 namespace App\UseCase\UseCaseInteractor;
 require_once __DIR__ . '/../../../vendor/autoload.php';
 use App\Adapter\QueryServise\UserQueryServise;
+use App\Infrastructure\Dao\UserAgeDao;
 use App\UseCase\UseCaseInput\SignInInput;
 use App\UseCase\UseCaseOutput\SignInOutput;
 use App\Domain\Entity\User;
+use App\Domain\ValueObject\User\UserId;
+use App\Domain\ValueObject\User\UserName;
+use App\Domain\ValueObject\Email;
+use App\Domain\ValueObject\Age;
+use App\Domain\ValueObject\RegistrationDate;
 use App\Domain\ValueObject\HashedPassword;
 
 /**
@@ -41,6 +47,7 @@ final class SignInInteractor
     public function __construct(SignInInput $input)
     {
         $this->userQueryServise = new UserQueryServise();
+        $this->userAgeDao = new UserAgeDao();
         $this->input = $input;
     }
 
@@ -56,6 +63,11 @@ final class SignInInteractor
 
         if ($this->notExistsUser($user)) {
             return new SignInOutput(false, self::FAILED_MESSAGE);
+        }
+
+        $userMapper = $this->createUserEntity($user);
+        if ($userMapper === null) {
+            throw new \Exception('年齢の登録をしてください!');
         }
 
         if ($this->isInvalidPassword($user->password())) {
@@ -99,6 +111,30 @@ final class SignInInteractor
         return !$hashedPassword->verify($this->input->password());
     }
 
+    /* UserEntityを作成する
+    *
+    * @param array $user
+    * @return ?User
+    */
+    private function createUserEntity(User $user): ?User
+    {
+        $userId = $user->id()->value();
+        $userAge = $this->userAgeDao->fetchAll($userId);
+
+        if ($userAge === null) {
+            return null;
+        }
+
+        return new User(
+            $user->id(),
+            $user->name(),
+            $user->email(),
+            $user->password(),
+            new Age($userAge['age']),
+            $user->registrationDate()
+        );
+    }
+
     /**
      * セッションの保存処理
      *
@@ -109,5 +145,12 @@ final class SignInInteractor
     {
         $_SESSION['user']['id'] = $user->id()->value();
         $_SESSION['user']['name'] = $user->name()->value();
+        if ($user->isPremiumMember()) {
+            $_SESSION['user']['memberStatus'] = 'プレミアム会員';
+        }
+
+        if (!$user->isPremiumMember()) {
+            $_SESSION['user']['memberStatus'] = 'ノーマル会員';
+        }
     }
 }
