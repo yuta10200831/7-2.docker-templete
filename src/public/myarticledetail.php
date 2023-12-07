@@ -34,6 +34,7 @@ try {
     Redirect::handler('mypage.php');
     exit;
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -54,9 +55,9 @@ try {
 
 <!-- 編集・削除ボタン -->
     <div class="flex space-x-4">
-        <a href="edit.php?id=<?php echo $blog_id; ?>" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200">編集</a>
+        <a href="edit.php?id=<?php echo ($article->getId()); ?>" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200">編集</a>
         <form action="post/delete.php" method="POST">
-        <input type="hidden" name="id" value="<?php echo $blog_id; ?>">
+        <input type="hidden" name="id" value="<?php echo ($article->getId()); ?>">
         <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-200">削除</button>
         </form>
         <a href="mypage.php" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition duration-200">マイページへ戻る</a>
