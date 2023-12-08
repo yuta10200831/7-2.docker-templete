@@ -1,7 +1,7 @@
 <?php
 namespace App\Adapter\QueryServise;
 
-use App\Infrastructure\Dao\UpdateDao;
+use App\Infrastructure\Dao\BlogDao;
 use App\Domain\Entity\Update;
 use App\Domain\ValueObject\Post\Title;
 use App\Domain\ValueObject\Post\Contents;
@@ -10,14 +10,14 @@ use App\Domain\ValueObject\Index\BlogId;
 
 final class UpdateQueryService
 {
-    private UpdateDao $updateDao;
+    private BlogDao $blogDao;
 
     public function __construct() {
-        $this->updateDao = new UpdateDao();
+        $this->blogDao = new BlogDao();
     }
 
     public function findByUserId($userId): array {
-        $updateMappers = $this->updateDao->findByUserId($userId);
+        $updateMappers = $this->blogDao->findByUserId($userId);
 
         $blogs = [];
         foreach ($updateMappers as $updateMapper) {
@@ -34,7 +34,7 @@ final class UpdateQueryService
     }
 
     public function findById(BlogId $blogId): ?Update {
-        $update = $this->updateDao->findById($blogId->getValue());
+        $update = $this->blogDao->findById($blogId->getValue());
 
         if (!$update) {
             return null;

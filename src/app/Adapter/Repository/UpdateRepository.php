@@ -2,21 +2,25 @@
 namespace App\Adapter\Repository;
 
 use App\Domain\Entity\Update;
-use App\Infrastructure\Dao\UpdateDao;
+use App\Infrastructure\Dao\BLogDao;
+use App\UseCase\UseCaseInput\UpdateInput;
 
 final class UpdateRepository
 {
-    private $dao;
+    private BlogDao $blogDao;
 
     public function __construct() {
-        $this->dao = new UpdateDao();
+        $this->blogDao = new BlogDao();
     }
 
-    public function update(Update $blog): void {
-        $titleValue = $blog->getTitle()->getValue();
-        $contentsValue = $blog->getContents()->getValue();
+    public function update(UpdateInput $input): void {
+        $blogIdValue = $input->getBlogId()->getValue();
+        $titleValue = $input->getTitle()->getValue();
+        $contentsValue = $input->getContents()->getValue();
 
-        $this->dao->update($blog->getId(), $titleValue, $contentsValue);
+        // データベース更新処理
+        $this->blogDao->update($blogIdValue, $titleValue, $contentsValue);
     }
 }
+
 ?>

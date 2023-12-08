@@ -32,12 +32,7 @@ final class UpdateInteractor
             throw new \Exception("指定された記事が見つかりません。");
         }
 
-        // 記事内容の更新
-        $existingUpdate->setTitle($this->input->getTitle());
-        $existingUpdate->setContents($this->input->getContents());
-
-        // 更新処理
-        $this->updateRepository->update($existingUpdate);
+        $this->updateRepository->update($this->input);
 
         return new UpdateOutput(true, self::COMPLETED_MESSAGE);
     }

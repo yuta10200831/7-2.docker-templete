@@ -43,15 +43,15 @@ try {
     $updateOutput = $updateInteractor->handle();
 
     // 更新処理の結果の確認
-    if (!$updateOutput->isSuccess()) {
+    if (!$updateOutput->getBlogs()) {
         throw new Exception($updateOutput->message());
     }
 
     // 成功メッセージのセットとリダイレクト
-    $_SESSION['message'] = $updateOutput->isSuccess();
+    $_SESSION['message'] = $updateOutput->getBlogs();
     Redirect::handler("/myarticledetail.php?id={$blogIdValue}");
 } catch (\Exception $e) {
-    $_SESSION['error'] = $e->isSuccess();
+    $_SESSION['error'] = $e->getBlogs();
     header("Location: /edit.php?id={$blogIdValue}");
     exit;
 }

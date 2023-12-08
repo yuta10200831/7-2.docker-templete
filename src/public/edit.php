@@ -19,7 +19,7 @@ try {
     $input = new UpdateGetInput($blogId);
     $interactor = new UpdateGetInteractor($input);
     $output = $interactor->handle();
-    $update = $output->getBlogs();
+    $update = $output->getUpdate();
 
     if (!$update) {
         throw new Exception('指定されたブログが見つかりません。');
