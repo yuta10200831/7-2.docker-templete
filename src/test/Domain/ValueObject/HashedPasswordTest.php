@@ -7,7 +7,7 @@ use App\Domain\ValueObject\InputPassword;
 
 final class HashedPasswordTest extends TestCase
 {
-    private $rawPassword = 'password123';
+    private $rawPassword = 'Password123';
     private $hashedPassword;
 
     protected function setUp(): void
@@ -43,7 +43,7 @@ final class HashedPasswordTest extends TestCase
     public function 照合が失敗する場合_falseを返すこと(): void
     {
         $hashedPasswordObj = new HashedPassword($this->hashedPassword);
-        $inputPasswordObj = new InputPassword('wrongpassword');
+        $inputPasswordObj = new InputPassword('ValidPass1234');
 
         $this->assertFalse($hashedPasswordObj->verify($inputPasswordObj));
     }
