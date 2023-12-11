@@ -1,20 +1,40 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use App\UseCase\UseCaseInput\UpdateGetInput;
+use App\UseCase\UseCaseInteractor\UpdateGetInteractor;
+use App\Domain\ValueObject\Index\BlogId;
+use App\Domain\ValueObject\Post\Title;
+use App\Domain\ValueObject\Post\Contents;
+
 session_start();
 
-use App\Infrastructure\Dao\BlogRepositoryMySQLImpl;
+try {
+    $getBlogId = $_GET['id'] ?? null;
+    if (!is_numeric($getBlogId)) {
+        throw new Exception('無効なブログIDです。');
+    }
+    $blogId = new BlogId((int)$getBlogId);
 
-$blogRepo = new BlogRepositoryMySQLImpl();
-$blog_id = $_GET['id'] ?? null;
+    $input = new UpdateGetInput($blogId);
+    $interactor = new UpdateGetInteractor($input);
+    $output = $interactor->handle();
+    $update = $output->getUpdate();
 
-$blog = $blogRepo->findById($blog_id);
+    if (!$update) {
+        throw new Exception('指定されたブログが見つかりません。');
+    }
 
-if (!$blog) {
+    $blog_title = $update->getTitle()->getValue();
+    $blog_contents = $update->getContents()->getValue();
+
+} catch (Exception $e) {
+    $_SESSION['error'] = $e->getMessage();
     header('Location: mypage.php');
     exit;
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="ja">
@@ -28,13 +48,13 @@ if (!$blog) {
     <main class="container mx-auto mt-10 p-4 max-w-2xl bg-white rounded-lg shadow-lg">
         <h2 class="text-2xl font-bold mb-4">投稿編集</h2>
         <form action="post/update.php" method="POST">
-            <input type="hidden" name="id" value="<?php echo $blog_id; ?>">
+            <input type="hidden" name="blogId" value="<?php echo $getBlogId; ?>">
             <label for="title">タイトル:</label>
-            <input type="text" name="title" value="<?php echo htmlspecialchars($blog->getTitle()); ?>" class="w-full p-2 mb-4 border rounded">
-            
+            <input type="text" name="title" value="<?php echo htmlspecialchars($blog_title); ?>" class="w-full p-2 mb-4 border rounded">
+
             <label for="contents">内容:</label>
-            <textarea name="contents" rows="4" class="w-full p-2 mb-4  border rounded"><?php echo htmlspecialchars($blog->getContents()); ?></textarea>
-            
+            <textarea name="contents" rows="4" class="w-full p-2 mb-4  border rounded"><?php echo htmlspecialchars($blog_contents); ?></textarea>
+
             <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200">編集</button>
         </form>
     </main>
