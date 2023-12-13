@@ -10,7 +10,7 @@ use App\Domain\ValueObject\Index\BlogId;
 use App\Domain\ValueObject\Index\CommentText;
 use App\Infrastructure\Dao\CommentDao;
 
-final class CommentCreateInteractorTest extends TestCase
+final class CommentCreateTest extends TestCase
 {
     /**
      * @test
