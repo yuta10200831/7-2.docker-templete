@@ -9,7 +9,7 @@ final class AgeTest extends TestCase
     /**
      * @test
      */
-    public function 有効な年齢の場合_例外が発生しないこと(): void
+    public function 有効年齢の場合_例外が発生しないこと(): void
     {
         $age = new Age(25);
 
