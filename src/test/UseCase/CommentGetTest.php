@@ -16,7 +16,8 @@ final class CommentGetTest extends TestCase
     public function コメントが正常に取得できる()
     {
         $input = new CommentInput(
-            new BlogId(1)
+            new BlogId(1),
+            new CommentText('')
         );
 
         $commentDao = new CommentDao();
