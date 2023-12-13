@@ -6,6 +6,7 @@ use App\UseCase\UseCaseInteractor\CommentGetInteractor;
 use App\Adapter\QueryServise\CommentQueryService;
 use App\UseCase\UseCaseInput\CommentInput;
 use App\Domain\ValueObject\Index\BlogId;
+use App\Domain\ValueObject\Index\CommentText;
 use App\Infrastructure\Dao\CommentDao;
 
 final class CommentGetTest extends TestCase
