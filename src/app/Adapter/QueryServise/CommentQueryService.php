@@ -5,7 +5,7 @@ use App\Infrastructure\Dao\CommentDao;
 use App\Domain\Entity\Comment;
 use App\Domain\ValueObject\Index\BlogId;
 
-final class CommentQueryService {
+class CommentQueryService {
     private $commentDao;
 
     public function __construct(CommentDao $commentDao) {
