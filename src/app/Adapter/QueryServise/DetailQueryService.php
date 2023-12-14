@@ -7,7 +7,7 @@ use App\Domain\ValueObject\Post\Contents;
 use App\Domain\ValueObject\User\UserId;
 use App\Domain\ValueObject\Index\BlogId;
 
-final class DetailQueryService
+class DetailQueryService
 {
     private DetailDao $detailDao;
 
