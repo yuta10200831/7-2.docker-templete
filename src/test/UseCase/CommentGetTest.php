@@ -17,14 +17,16 @@ final class CommentGetTest extends TestCase
     public function コメントが正常に取得できる()
     {
         $blogId = new BlogId(1);
-        $commentText = new CommentText('');
-        $input = new CommentInput($blogId, $commentText);
+        $input = new CommentInput($blogId, new CommentText(''));
 
         $commentQueryInterface = new class implements ICommentQuery {
             public function findByBlogId(BlogId $blogId): array {
-                return [
-                    new Comment(1, 'Test Comment', $blogId, 'Test User', new \DateTimeImmutable('now')),
-                ];
+                if ($blogId->getValue() === 1) {
+                    return [
+                        new Comment(1, 'Test Comment', $blogId, 'Test User', new \DateTimeImmutable('now')),
+                    ];
+                }
+                return [];
             }
         };
 
