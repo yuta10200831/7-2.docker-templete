@@ -43,6 +43,7 @@ final class CommentCreateTest extends TestCase
 
         $this->assertTrue($output->isSuccess(), 'コメントの保存が成功しました');
     }
+
     /**
      * @test
      */
@@ -53,6 +54,10 @@ final class CommentCreateTest extends TestCase
         $commentInterface = new class implements IComment {
             public function storeComment(BlogId $blogId, string $comment, string $commenterName, int $userId): bool {
                 return true;
+            }
+
+            public function findByBlogId(BlogId $blogId): array {
+                return ['Existing comment'];
             }
         };
 
@@ -82,6 +87,10 @@ final class CommentCreateTest extends TestCase
         $commentInterface = new class implements IComment {
             public function storeComment(BlogId $blogId, string $comment, string $commenterName, int $userId): bool {
                 return false;
+            }
+
+            public function findByBlogId(BlogId $blogId): array {
+                return [];
             }
         };
 
