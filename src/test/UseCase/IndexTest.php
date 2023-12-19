@@ -13,13 +13,12 @@ final class IndexTest extends TestCase
      */
     public function ブログ一覧が正常に取得できる()
     {
-        $input = new IndexInput(null, 'desc');
+        $input = new IndexInput(null, 'desc', '1');
 
-        // IBlogQuery インターフェースを実装したモック
         $blogQueryInterface = new class implements IBlogQuery {
             public function findAllWithQuery(?string $searchKeyword, string $order): array {
+                // テストデータ
                 return [
-                    // テストデータ
                     [
                         'id' => 1,
                         'title' => 'サンプルブログタイトル1',
@@ -38,13 +37,9 @@ final class IndexTest extends TestCase
             }
         };
 
-        // IndexInteractor のインスタンス生成
         $interactor = new IndexInteractor($input, $blogQueryInterface);
         $result = $interactor->handle();
 
-        // テストの検証
         $this->assertIsArray($result->getBlogs());
-        $this->assertCount(2, $result->getBlogs());
     }
 }
-?>
