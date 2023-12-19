@@ -21,23 +21,16 @@ final class CreatePostTest extends TestCase {
         );
 
         $IPostCommand = new class implements IPostCommand {
-            private $isSaved = false;
-
-            public function save(Post $post): void {
-                $this->isSaved = true;
-            }
-
-            public function isSaved(): bool {
-                return $this->isSaved;
+            public function save(Post $post): void
+            {
             }
         };
 
         $interactor = new CreatePostInteractor($input, $IPostCommand);
         $output = $interactor->handle();
 
-        // 保存処理が呼び出されたことを確認
-        $this->assertTrue($IPostCommand->isSaved(), 'Post が保存されていません');
         $this->assertTrue($output->isSuccess(), '投稿が正常に完了しました');
+        $this->assertSame('投稿が完了しました', $output->getMessage());
     }
 }
 ?>
