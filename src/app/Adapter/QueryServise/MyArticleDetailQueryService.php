@@ -7,8 +7,9 @@ use App\Domain\ValueObject\Post\Title;
 use App\Domain\ValueObject\Post\Contents;
 use App\Domain\ValueObject\User\UserId;
 use App\Domain\ValueObject\Index\BlogId;
+use App\Domain\Port\IMyArticleDetailQuery;
 
-final class MyArticleDetailQueryService
+final class MyArticleDetailQueryService implements IMyArticleDetailQuery
 {
     private MyArticleDetailDao $myArticleDetailDao;
 
