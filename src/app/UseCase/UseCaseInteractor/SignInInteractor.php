@@ -13,6 +13,7 @@ use App\Domain\ValueObject\Email;
 use App\Domain\ValueObject\Age;
 use App\Domain\ValueObject\RegistrationDate;
 use App\Domain\ValueObject\HashedPassword;
+use App\Domain\Port\IUserQuery;
 
 /**
  * ログインユースケース
@@ -44,9 +45,9 @@ final class SignInInteractor
      *
      * @param SignInInput $input
      */
-    public function __construct(SignInInput $input)
+    public function __construct(SignInInput $input, IUserQuery $queryService)
     {
-        $this->userQueryServise = new UserQueryServise();
+        $this->userQueryServise = $queryService;
         $this->userAgeDao = new UserAgeDao();
         $this->input = $input;
     }
