@@ -6,6 +6,8 @@ use App\UseCase\UseCaseInteractor\UpdateGetInteractor;
 use App\Domain\ValueObject\Index\BlogId;
 use App\Domain\ValueObject\Post\Title;
 use App\Domain\ValueObject\Post\Contents;
+use App\Domain\Port\IUpdateQuery;
+use App\Adapter\QueryServise\UpdateQueryService;
 
 session_start();
 
@@ -17,7 +19,8 @@ try {
     $blogId = new BlogId((int)$getBlogId);
 
     $input = new UpdateGetInput($blogId);
-    $interactor = new UpdateGetInteractor($input);
+    $updatequeryService = new UpdateQueryService();
+    $interactor = new UpdateGetInteractor($input, $updatequeryService);
     $output = $interactor->handle();
     $update = $output->getUpdate();
 
