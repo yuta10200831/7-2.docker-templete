@@ -4,8 +4,9 @@ namespace App\Adapter\Repository;
 use App\Domain\Entity\Update;
 use App\Infrastructure\Dao\BLogDao;
 use App\UseCase\UseCaseInput\UpdateInput;
+use App\Domain\Port\IUpdateCommand;
 
-final class UpdateRepository
+final class UpdateRepository implements IUpdateCommand
 {
     private BlogDao $blogDao;
 

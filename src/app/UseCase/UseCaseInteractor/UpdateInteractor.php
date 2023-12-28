@@ -7,6 +7,8 @@ use App\UseCase\UseCaseOutput\UpdateOutput;
 use App\Adapter\Repository\UpdateRepository;
 use App\Adapter\QueryServise\UpdateQueryService;
 use App\Domain\Entity\Update;
+use App\Domain\Port\IUpdateCommand;
+use App\Domain\Port\IUpdateQuery;
 
 final class UpdateInteractor
 {
@@ -16,10 +18,10 @@ final class UpdateInteractor
     private $updateQueryService;
     private $input;
 
-    public function __construct(UpdateInput $input)
+    public function __construct(UpdateInput $input, IUpdateQuery $updateQueryService, IUpdateCommand $updateCommand)
     {
-        $this->updateRepository = new UpdateRepository();
-        $this->updateQueryService = new UpdateQueryService();
+        $this->updateQueryService = $updateQueryService;
+        $this->updateCommand= $updateCommand;
         $this->input = $input;
     }
 
