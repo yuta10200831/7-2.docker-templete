@@ -9,8 +9,8 @@ use App\Domain\ValueObject\User\NewUser;
 use App\Domain\Entity\UserAge;
 use App\Domain\Entity\User;
 use App\Domain\ValueObject\User\UserId;
-use App\Infrastructure\Dao\UserAgeDao;
-use App\Infrastructure\Dao\UserDao;
+use App\Domain\Port\IUserCommand;
+use App\Domain\Port\IUserQuery;
 
 /**
  * ユーザー登録ユースケース
@@ -42,25 +42,17 @@ final class SignUpInteractor
      */
     private $input;
 
-    /* @var UserAgeDao
-    */
-    private $userAgeDao;
-
-    /* @var UserDao
-    */
-    private $userDao;
-
     /**
      * コンストラクタ
      *
      * @param SignUpInput $input
      */
-    public function __construct(SignUpInput $input)
+    public function __construct(SignUpInput $input, IUserQuery $queryService, IUserCommand $commandService)
     {
+        $this->userQueryService = $queryService;
+        $this->userRepository = $commandService;
         $this->userRepository = new UserRepository();
         $this->userQueryServise = new UserQueryServise();
-        $this->userAgeDao = new UserAgeDao();
-        $this->userDao = new UserDao();
         $this->input = $input;
     }
 
