@@ -11,7 +11,7 @@ use App\Domain\ValueObject\Post\Title;
 use App\Domain\ValueObject\Post\Contents;
 use App\Domain\ValueObject\User\UserId;
 
-final class UpdateGetTest extends TestCase
+final class UpdatePostTest extends TestCase
 {
     /**
      * @test
