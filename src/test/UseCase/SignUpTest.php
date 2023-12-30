@@ -48,6 +48,7 @@ final class SignUpTest extends TestCase
 
     /**
      * @test
+     * @group only
      */
     public function 既存のメールアドレスでの登録試行()
     {

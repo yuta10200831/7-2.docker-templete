@@ -33,9 +33,9 @@ final class SignUpInteractor
     private $userRepository;
 
     /**
-     * @var UserQueryServise
+     * @var UserQueryService
      */
-    private $userQueryServise;
+    private $userQueryService;
 
     /**
      * @var SignUpInput
@@ -51,8 +51,6 @@ final class SignUpInteractor
     {
         $this->userQueryService = $queryService;
         $this->userRepository = $commandService;
-        $this->userRepository = new UserRepository();
-        $this->userQueryServise = new UserQueryServise();
         $this->input = $input;
     }
 
@@ -81,7 +79,7 @@ final class SignUpInteractor
      */
     private function findUser(): ?User
     {
-        return $this->userQueryServise->findByEmail($this->input->email());
+        return $this->userQueryService->findByEmail($this->input->email());
     }
 
     /**
