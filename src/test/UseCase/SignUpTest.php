@@ -14,11 +14,14 @@ use App\Domain\Entity\User;
 use App\Domain\ValueObject\User\UserId;
 use App\Domain\ValueObject\User\NewUser;
 use App\Domain\Entity\UserAge;
+use App\Domain\ValueObject\HashedPassword;
+use App\Domain\ValueObject\RegistrationDate;
 
 final class SignUpTest extends TestCase
 {
     /**
      * @test
+     * @group only
      */
     public function 新規ユーザーの正常な登録()
     {
@@ -34,13 +37,13 @@ final class SignUpTest extends TestCase
             }
         };
         $userCommandInterface = new class implements IUserCommand {
-          public function insert(NewUser $newUser): void {}
-          public function getLastInsertId(): int { return 123; }
-          public function insertAge(UserAge $userAge): void {}
-      };
+            public function insert(NewUser $newUser): void {}
+            public function getLastInsertId(): int { return 123; }
+            public function insertAge(UserAge $userAge): void {}
+        };
 
-      $interactor = new SignUpInteractor($input, $userQueryInterface, $userCommandInterface);
-      $output = $interactor->handler();
+        $interactor = new SignUpInteractor($input, $userQueryInterface, $userCommandInterface);
+        $output = $interactor->handler();
 
         $this->assertTrue($output->isSuccess());
         $this->assertEquals('登録が完了しました', $output->message());
@@ -60,24 +63,27 @@ final class SignUpTest extends TestCase
 
         $userQueryInterface = new class implements IUserQuery {
             public function findByEmail(Email $email): ?User {
+                $hashedPassword = new HashedPassword('hashed_password_dummy');
+                $registrationDate = new RegistrationDate('2023-01-01 00:00:00');
                 return new User(
                     new UserId(1),
                     new UserName('Existing User'),
                     $email,
-                    new InputPassword('Password123'),
-                    new Age(25)
+                    $hashedPassword,
+                    new Age(25),
+                    $registrationDate
                 );
             }
         };
 
         $userCommandInterface = new class implements IUserCommand {
-          public function insert(NewUser $newUser): void {}
-          public function getLastInsertId(): int { return 123; }
-          public function insertAge(UserAge $userAge): void {}
-      };
+            public function insert(NewUser $newUser): void {}
+            public function getLastInsertId(): int { return 123; }
+            public function insertAge(UserAge $userAge): void {}
+        };
 
-      $interactor = new SignUpInteractor($input, $userQueryInterface, $userCommandInterface);
-      $output = $interactor->handler();
+        $interactor = new SignUpInteractor($input, $userQueryInterface, $userCommandInterface);
+        $output = $interactor->handler();
 
         $this->assertFalse($output->isSuccess());
         $this->assertEquals('すでに登録済みのメールアドレスです', $output->message());
