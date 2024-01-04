@@ -21,7 +21,6 @@ final class SignUpTest extends TestCase
 {
     /**
      * @test
-     * @group only
      */
     public function 新規ユーザーの正常な登録()
     {
@@ -51,7 +50,6 @@ final class SignUpTest extends TestCase
 
     /**
      * @test
-     * @group only
      */
     public function 既存のメールアドレスでの登録試行()
     {
