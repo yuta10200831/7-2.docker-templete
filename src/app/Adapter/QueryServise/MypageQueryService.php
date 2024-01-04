@@ -6,8 +6,9 @@ use App\Domain\Entity\Mypage;
 use App\Domain\ValueObject\User\UserId;
 use App\Domain\ValueObject\Post\Contents;
 use App\Domain\ValueObject\Post\Title;
+use App\Domain\Port\IMypageQuery;
 
-final class MypageQueryService
+final class MypageQueryService implements IMypageQuery
 {
     private $mypageDao;
 
@@ -15,7 +16,7 @@ final class MypageQueryService
         $this->mypageDao = new MypageDao();
     }
 
-public function findByUserId($userId): array {
+public function findByUserId(UserId $userId): array {
     $mypageMappers = $this->mypageDao->findByUserId($userId);
 
     $mypages = [];

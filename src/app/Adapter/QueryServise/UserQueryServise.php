@@ -12,8 +12,9 @@ use App\Domain\Entity\User;
 use App\Domain\ValueObject\HashedPassword;
 use App\Domain\ValueObject\RegistrationDate;
 use App\Domain\ValueObject\User\UserId;
+use App\Domain\Port\IUserQuery;
 
-final class UserQueryServise
+final class UserQueryServise implements IUserQuery
 {
     private $userDao;
     private $userAgeDao;

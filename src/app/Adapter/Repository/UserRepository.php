@@ -6,8 +6,9 @@ use App\Infrastructure\Dao\UserDao;
 use App\Infrastructure\Dao\UserAgeDao;
 use App\Domain\ValueObject\User\NewUser;
 use App\Domain\Entity\UserAge;
+use App\Domain\Port\IUserCommand;
 
-final class UserRepository
+final class UserRepository implements IUserCommand
 {
     /**
      * @var UserDao

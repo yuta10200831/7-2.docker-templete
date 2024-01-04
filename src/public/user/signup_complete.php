@@ -9,10 +9,12 @@ use App\Domain\ValueObject\Age;
 use App\Domain\ValueObject\InputPassword;
 use App\UseCase\UseCaseInput\SignUpInput;
 use App\UseCase\UseCaseInteractor\SignUpInteractor;
-use App\Infrastructure\Dao\UserDao;
-use App\Infrastructure\Dao\UserAgeDao;
 use App\Domain\Entity\UserAge;
 use App\Domain\ValueObject\User\UserId;
+use App\Domain\Port\IUserQuery;
+use App\Domain\Port\IUserCommand;
+use App\Adapter\QueryServise\UserQueryServise;
+use App\Adapter\Repository\UserRepository;
 
 $name = filter_input(INPUT_POST, 'name');
 $email = filter_input(INPUT_POST, 'email');
@@ -48,17 +50,14 @@ try {
         $userPassword,
         $userAge
     );
-    $userDao = new UserDao();
-    $userAgeDao = new UserAgeDao();
-    $useCase = new SignUpInteractor($useCaseInput, $userDao, $userAgeDao);
+    $queryService = new UserQueryServise();
+    $repository = new UserRepository();
+    $useCase = new SignUpInteractor($useCaseInput, $queryService, $repository);
     $useCaseOutput = $useCase->handler();
 
     if (!$useCaseOutput->isSuccess()) {
         throw new Exception($useCaseOutput->message());
     }
-    // $lastUserId = $userDao->getPdo()->lastInsertId();
-    // $userAgeObject = new UserAge(new UserId($lastUserId), new Age($age));
-    // $userAgeDao->create($userAgeObject);
 
     $_SESSION['message'] = $useCaseOutput->message();
     Redirect::handler('signin.php');

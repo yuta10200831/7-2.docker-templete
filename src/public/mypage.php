@@ -3,6 +3,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use App\UseCase\UseCaseInteractor\MypageInteractor;
 use App\UseCase\UseCaseInput\MypageInput;
 use App\Domain\ValueObject\User\UserId;
+use App\Adapter\QueryServise\MypageQueryService;
 
 session_start();
 
@@ -18,7 +19,8 @@ try {
     $mypageInput = new MypageInput($userId);
 
     // MypageInteractorのインスタンスを生成
-    $mypageInteractor = new MypageInteractor($mypageInput);
+    $queryService = new MypageQueryService();
+    $mypageInteractor = new MypageInteractor($mypageInput, $queryService);
 
     // InteractorにInputを渡して実行し、結果を取得
     $mypageOutput = $mypageInteractor->handle();
