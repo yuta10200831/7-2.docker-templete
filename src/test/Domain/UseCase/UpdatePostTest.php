@@ -4,7 +4,7 @@ namespace App\Test\UseCase\UseCaseInteractor;
 use PHPUnit\Framework\TestCase;
 use App\UseCase\UseCaseInteractor\UpdateGetInteractor;
 use App\UseCase\UseCaseInput\UpdateGetInput;
-use App\Domain\Port\IUpdateCommand;
+use App\Domain\Port\IUpdateQuery;
 use App\Domain\Entity\Update;
 use App\Domain\ValueObject\Index\BlogId;
 use App\Domain\ValueObject\Post\Title;
@@ -21,7 +21,7 @@ final class UpdatePostTest extends TestCase
         $blogId = new BlogId(1);
         $input = new UpdateGetInput($blogId);
 
-        $updateCommandMock = new class implements IUpdateCommand {
+        $updateQueryMock = new class implements IUpdateQuery {
             public function findById(BlogId $blogId): ?Update {
                 if ($blogId->getValue() === 1) {
                     return new Update(
@@ -36,7 +36,7 @@ final class UpdatePostTest extends TestCase
             }
         };
 
-        $interactor = new UpdateGetInteractor($input, $updateCommandMock);
+        $interactor = new UpdateGetInteractor($input, $updateQueryMock);
         $output = $interactor->handle();
 
         $this->assertInstanceOf(Update::class, $output->getUpdate());
