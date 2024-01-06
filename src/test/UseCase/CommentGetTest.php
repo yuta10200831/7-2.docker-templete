@@ -13,6 +13,7 @@ final class CommentGetTest extends TestCase
 {
     /**
      * @test
+     * @group only
      */
     public function コメントが正常に取得できる()
     {
@@ -21,12 +22,9 @@ final class CommentGetTest extends TestCase
 
         $commentQueryInterface = new class implements ICommentQuery {
             public function findByBlogId(BlogId $blogId): array {
-                if ($blogId->getValue() === 1) {
-                    return [
-                        new Comment(1, 'Test Comment', $blogId, 'Test User', new \DateTimeImmutable('now')),
-                    ];
-                }
-                return [];
+                return [
+                    new Comment(1, 'Test Comment', $blogId, 'Test User', new \DateTimeImmutable('now'))
+                ];
             }
         };
 

@@ -8,27 +8,33 @@ use App\Infrastructure\Redirect\Redirect;
 use App\Domain\ValueObject\User\UserId;
 use App\Domain\ValueObject\Index\BlogId;
 use App\Domain\ValueObject\Index\CommentText;
+use App\Adapter\QueryServise\CommentQueryService;
+use App\Infrastructure\Dao\CommentDao;
+use App\Domain\Port\ICommentQuery;
 
 session_start();
 
 try {
-  // 記事の取得
-  $getBlogId = $_GET['id'];
-  $blogId = new BlogId((int)$getBlogId);
-  $userId = new UserId($_SESSION['user']['id']);
-  $input = new DetailInput($userId, $blogId);
-  $interactor = new DetailInteractor($input);
-  $output = $interactor->handle();
-  $detail = $output->getBlogs();
-  if (!$detail) {
-      throw new Exception('記事が見つかりませんでした。');
-  }
-  // コメントの取得
-  $commentInteractor = new CommentGetInteractor(new CommentInput($blogId, new CommentText('')));
-  $comments = $commentInteractor->getCommentsByBlogId();
-} catch ( Exception $e) {
-  $_SESSION['errors'][] = $e->getMessage();
-  Redirect::handler('index.php');
+    // 記事の取得
+    $getBlogId = $_GET['id'];
+    $blogId = new BlogId((int)$getBlogId);
+    $userId = new UserId($_SESSION['user']['id']);
+    $input = new DetailInput($userId, $blogId);
+    $interactor = new DetailInteractor($input);
+    $output = $interactor->handle();
+    $detail = $output->getBlogs();
+    if (!$detail) {
+        throw new Exception('記事が見つかりませんでした。');
+    }
+
+    // コメントの取得
+    $commentDao = new CommentDao();
+    $commentQueryService = new CommentQueryService($commentDao);
+    $commentInteractor = new CommentGetInteractor(new CommentInput($blogId, new CommentText('')), $commentQueryService);
+    $comments = $commentInteractor->getCommentsByBlogId();
+} catch (Exception $e) {
+    $_SESSION['errors'][] = $e->getMessage();
+    Redirect::handler('index.php');
     exit;
 }
 ?>
