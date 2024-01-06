@@ -8,27 +8,33 @@ use App\Infrastructure\Redirect\Redirect;
 use App\Domain\ValueObject\User\UserId;
 use App\Domain\ValueObject\Index\BlogId;
 use App\Domain\ValueObject\Index\CommentText;
+use App\Adapter\QueryServise\CommentQueryService;
+use App\Infrastructure\Dao\CommentDao;
+use App\Domain\Port\ICommentQuery;
 
 session_start();
 
 try {
-  // 記事の取得
-  $getBlogId = $_GET['id'];
-  $blogId = new BlogId((int)$getBlogId);
-  $userId = new UserId($_SESSION['user']['id']);
-  $input = new DetailInput($userId, $blogId);
-  $interactor = new DetailInteractor($input);
-  $output = $interactor->handle();
-  $detail = $output->getBlogs();
-  if (!$detail) {
-      throw new Exception('記事が見つかりませんでした。');
-  }
-  // コメントの取得
-  $commentInteractor = new CommentGetInteractor(new CommentInput($blogId, new CommentText('')));
-  $comments = $commentInteractor->getCommentsByBlogId();
-} catch ( Exception $e) {
-  $_SESSION['errors'][] = $e->getMessage();
-  Redirect::handler('index.php');
+    // 記事の取得
+    $getBlogId = $_GET['id'];
+    $blogId = new BlogId((int)$getBlogId);
+    $userId = new UserId($_SESSION['user']['id']);
+    $input = new DetailInput($userId, $blogId);
+    $interactor = new DetailInteractor($input);
+    $output = $interactor->handle();
+    $detail = $output->getBlogs();
+    if (!$detail) {
+        throw new Exception('記事が見つかりませんでした。');
+    }
+
+    // コメントの取得
+    $commentDao = new CommentDao();
+    $commentQueryService = new CommentQueryService($commentDao);
+    $commentInteractor = new CommentGetInteractor(new CommentInput($blogId, new CommentText('')), $commentQueryService);
+    $comments = $commentInteractor->getCommentsByBlogId();
+} catch (Exception $e) {
+    $_SESSION['errors'][] = $e->getMessage();
+    Redirect::handler('index.php');
     exit;
 }
 ?>
@@ -57,12 +63,17 @@ try {
         <section class="bg-white rounded-lg shadow p-4">
             <h2 class="text-xl font-semibold mb-4">コメント</h2>
 
-        <!-- エラーメッセージの表示 -->
-        <?php if (!empty($error_message)): ?>
-          <div class="mb-4 bg-red-200 border-red-400 text-red-700 border-solid border-2 p-4 rounded w-1/4">
-          <?php echo htmlspecialchars($error_message); ?>
-          </div>
-        <?php endif; ?>
+            <!-- エラーメッセージの表示 -->
+            <?php if (!empty($_SESSION['errors'])): ?>
+                <div class="mb-4 bg-red-200 border-red-400 text-red-700 border-solid border-2 p-4 rounded w-1/4">
+                    <?php
+                    foreach ($_SESSION['errors'] as $error_message) {
+                        echo htmlspecialchars($error_message) . '<br>';
+                    }
+                    unset($_SESSION['errors']);
+                    ?>
+                </div>
+            <?php endif; ?>
 
             <?php if (isset($_SESSION['user']['id'])): ?>
             <form action="comment/store.php" method="post" class="mb-6">
