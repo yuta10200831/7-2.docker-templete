@@ -1,22 +1,22 @@
 <?php
 
 namespace App\UseCase\UseCaseInteractor;
-require_once __DIR__ . '/../../../vendor/autoload.php';
+
 use App\UseCase\UseCaseInput\CreatePostInput;
 use App\UseCase\UseCaseOutput\CreatePostOutput;
-use App\Adapter\Repository\PostRepository;
+use App\Domain\Port\IPostCommand;
 use App\Domain\Entity\Post;
 
 final class CreatePostInteractor
 {
     const COMPLETED_MESSAGE = "投稿が完了しました";
 
-    private $postRepository;
+    private $postCommand;
     private $input;
 
-    public function __construct(CreatePostInput $input)
+    public function __construct(IPostCommand $postCommand, CreatePostInput $input)
     {
-        $this->postRepository = new PostRepository();
+        $this->postCommand = $postCommand;
         $this->input = $input;
     }
 
@@ -28,7 +28,7 @@ final class CreatePostInteractor
             $this->input->getUserId()
         );
 
-        $this->postRepository->save($post);
+        $this->postCommand->save($post);
 
         return new CreatePostOutput(true, self::COMPLETED_MESSAGE);
     }
