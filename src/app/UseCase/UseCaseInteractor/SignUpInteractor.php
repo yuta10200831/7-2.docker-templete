@@ -9,8 +9,8 @@ use App\Domain\ValueObject\User\NewUser;
 use App\Domain\Entity\UserAge;
 use App\Domain\Entity\User;
 use App\Domain\ValueObject\User\UserId;
-use App\Infrastructure\Dao\UserAgeDao;
-use App\Infrastructure\Dao\UserDao;
+use App\Domain\Port\IUserCommand;
+use App\Domain\Port\IUserQuery;
 
 /**
  * ユーザー登録ユースケース
@@ -33,34 +33,24 @@ final class SignUpInteractor
     private $userRepository;
 
     /**
-     * @var UserQueryServise
+     * @var UserQueryService
      */
-    private $userQueryServise;
+    private $userQueryService;
 
     /**
      * @var SignUpInput
      */
     private $input;
 
-    /* @var UserAgeDao
-    */
-    private $userAgeDao;
-
-    /* @var UserDao
-    */
-    private $userDao;
-
     /**
      * コンストラクタ
      *
      * @param SignUpInput $input
      */
-    public function __construct(SignUpInput $input)
+    public function __construct(SignUpInput $input, IUserQuery $queryService, IUserCommand $commandService)
     {
-        $this->userRepository = new UserRepository();
-        $this->userQueryServise = new UserQueryServise();
-        $this->userAgeDao = new UserAgeDao();
-        $this->userDao = new UserDao();
+        $this->userQueryService = $queryService;
+        $this->userRepository = $commandService;
         $this->input = $input;
     }
 
@@ -89,7 +79,7 @@ final class SignUpInteractor
      */
     private function findUser(): ?User
     {
-        return $this->userQueryServise->findByEmail($this->input->email());
+        return $this->userQueryService->findByEmail($this->input->email());
     }
 
     /**
