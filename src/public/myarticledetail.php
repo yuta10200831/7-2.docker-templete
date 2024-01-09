@@ -5,6 +5,7 @@ use App\Domain\ValueObject\Index\BlogId;
 use App\UseCase\UseCaseInput\MyArticleDetailInput;
 use App\UseCase\UseCaseInteractor\MyArticleDetailInteractor;
 use App\Infrastructure\Redirect\Redirect;
+use App\Adapter\QueryServise\MyArticleDetailQueryService;
 
 session_start();
 
@@ -23,7 +24,8 @@ try {
 
     $blogId = new BlogId((int)$blogIdValue);
     $input = new MyArticleDetailInput($userId, $blogId);
-    $interactor = new MyArticleDetailInteractor($input);
+    $queryService = new MyArticleDetailQueryService();
+    $interactor = new MyArticleDetailInteractor($input, $queryService);
     $output = $interactor->handle();
     $article = $output->getBlogs();
     if (!$article) {
