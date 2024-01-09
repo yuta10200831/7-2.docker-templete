@@ -1,5 +1,4 @@
 <?php
-
 require_once __DIR__ . '/../../vendor/autoload.php';
 use App\Infrastructure\Redirect\Redirect;
 use App\Domain\ValueObject\Index\BlogId;
@@ -16,7 +15,6 @@ session_start();
 //データの取得
 $blog_id = filter_input(INPUT_POST, 'blogId');
 $commentContent = filter_input(INPUT_POST, 'comments');
-
 //バリデーション
 if (empty($commentContent)) {
     $_SESSION['error'] = 'コメントを入力してください。';

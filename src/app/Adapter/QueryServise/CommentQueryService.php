@@ -1,6 +1,5 @@
 <?php
 namespace App\Adapter\QueryServise;
-
 use App\Infrastructure\Dao\CommentDao;
 use App\Domain\Entity\Comment;
 use App\Domain\ValueObject\Index\BlogId;

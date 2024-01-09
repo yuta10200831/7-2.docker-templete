@@ -1,7 +1,5 @@
 <?php
-
 namespace App\UseCase\UseCaseInteractor;
-
 use App\Adapter\QueryServise\CommentQueryService;
 use App\UseCase\UseCaseInput\CommentInput;
 use App\UseCase\UseCaseOutput\CommentOutput;
@@ -29,19 +27,15 @@ final class CommentCreateInteractor {
         $commenterName = $_SESSION['user']['name'];
         $userId = $_SESSION['user']['id'];
         $blogId = $this->input->blogId();
-
         if ($this->existsComment($comment)) {
             return new CommentOutput(false, self::ALREADY_EXISTS_MESSAGE);
         }
-
         $isStored = $this->storeComment($comment, $commenterName, $userId);
         if (!$isStored) {
             return new CommentOutput(false, 'コメントの保存に失敗しました。');
         }
-
         return new CommentOutput(true, self::COMPLETED_MESSAGE);
     }
-
     private function existsComment(string $comment): bool {
         $comments = $this->commentQueryService->findByBlogId($this->input->blogId());
         $result = false;
@@ -53,7 +47,6 @@ final class CommentCreateInteractor {
         }
         return $result;
     }
-
     private function storeComment(string $comment, string $commenterName, int $userId): bool {
         $blogId = $this->input->blogId();
         if (!($blogId instanceof BlogId)) {
