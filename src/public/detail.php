@@ -57,12 +57,17 @@ try {
         <section class="bg-white rounded-lg shadow p-4">
             <h2 class="text-xl font-semibold mb-4">コメント</h2>
 
-        <!-- エラーメッセージの表示 -->
-        <?php if (!empty($error_message)): ?>
-          <div class="mb-4 bg-red-200 border-red-400 text-red-700 border-solid border-2 p-4 rounded w-1/4">
-          <?php echo htmlspecialchars($error_message); ?>
-          </div>
-        <?php endif; ?>
+            <!-- エラーメッセージの表示 -->
+            <?php if (!empty($_SESSION['errors'])): ?>
+                <div class="mb-4 bg-red-200 border-red-400 text-red-700 border-solid border-2 p-4 rounded w-1/4">
+                    <?php
+                    foreach ($_SESSION['errors'] as $error_message) {
+                        echo htmlspecialchars($error_message) . '<br>';
+                    }
+                    unset($_SESSION['errors']);
+                    ?>
+                </div>
+            <?php endif; ?>
 
             <?php if (isset($_SESSION['user']['id'])): ?>
             <form action="comment/store.php" method="post" class="mb-6">

@@ -6,7 +6,7 @@ use App\Domain\ValueObject\User\Comment;
 use App\Domain\ValueObject\Index\BlogId;
 use \PDO;
 
-final class CommentDao {
+class CommentDao {
     private $pdo;
 
     public function __construct()
