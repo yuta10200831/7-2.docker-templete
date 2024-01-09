@@ -28,9 +28,6 @@ final class CommentCreateTest extends TestCase
 
         $interactor = new CommentCreateInteractor($input, $commentQueryServiceMock);
 
-        $_SESSION['user']['name'] = 'testUser';
-        $_SESSION['user']['id'] = 123;
-
         $output = $interactor->handler();
 
         $this->assertTrue($output->isSuccess(), 'コメントの保存が成功しました');
@@ -53,9 +50,6 @@ final class CommentCreateTest extends TestCase
         };
 
         $interactor = new CommentCreateInteractor($input, $commentQueryServiceMock);
-
-        $_SESSION['user']['name'] = 'testUser';
-        $_SESSION['user']['id'] = 123;
 
         $output = $interactor->handler();
 
