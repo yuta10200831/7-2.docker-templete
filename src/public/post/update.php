@@ -8,6 +8,10 @@ use App\UseCase\UseCaseOutput\UpdateOutput;
 use App\Domain\ValueObject\Post\Title;
 use App\Domain\ValueObject\Post\Contents;
 use App\Domain\ValueObject\Index\BlogId;
+use App\Adapter\Repository\UpdateRepository;
+use App\Adapter\QueryServise\UpdateQueryService;
+use App\Domain\Port\IUpdateQuery;
+use App\Domain\Port\IUpdateCommand;
 
 session_start();
 
@@ -39,6 +43,8 @@ try {
     $input = new UpdateInput($blogId, $title, $contents);
 
     // UpdateInteractor オブジェクトの生成と処理の実行
+    $updatequeryService = new UpdateQueryService();
+    $updateCommand = new UpdateRepository();
     $updateInteractor = new UpdateInteractor($input);
     $updateOutput = $updateInteractor->handle();
 
