@@ -5,20 +5,22 @@ namespace App\UseCase\UseCaseInteractor;
 use App\Adapter\QueryServise\CommentQueryService;
 use App\UseCase\UseCaseInput\CommentInput;
 use App\UseCase\UseCaseOutput\CommentOutput;
-use App\Infrastructure\Dao\CommentDao;
 use App\Domain\ValueObject\Index\BlogId;
+use App\Domain\Port\IComment;
+use App\Domain\Port\ICommentQuery;
 
 final class CommentCreateInteractor {
 
     private $commentQueryService;
-    private $commentDao;
     private $input;
     private const ALREADY_EXISTS_MESSAGE = 'コメントがすでに存在します。';
     private const COMPLETED_MESSAGE = 'コメントを保存しました。';
 
-    public function __construct(CommentInput $input) {
-        $this->commentDao = new CommentDao();
-        $this->commentQueryService = new CommentQueryService($this->commentDao);
+    public function __construct(
+        CommentInput $input,
+        ICommentQuery $commentQueryService
+    ) {
+        $this->commentQueryService = $commentQueryService;
         $this->input = $input;
     }
 
@@ -58,7 +60,7 @@ final class CommentCreateInteractor {
             throw new \InvalidArgumentException('Invalid blog ID');
         }
 
-        return $this->commentDao->storeComment($blogId, $comment, $commenterName, $userId);
+        return $this->commentQueryService->storeComment($blogId, $comment, $commenterName, $userId);
     }
 }
 ?>
