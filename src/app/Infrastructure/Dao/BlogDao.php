@@ -51,5 +51,11 @@ class BlogDao {
         $stmt->execute($placeholders);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function update(int $id, string $title, string $contents): void {
+        $sql = "UPDATE blogs SET title = ?, contents = ? WHERE id = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$title, $contents, $id]);
+    }
 }
 ?>
