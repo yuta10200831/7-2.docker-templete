@@ -6,6 +6,8 @@ use App\Domain\ValueObject\InputPassword;
 use App\UseCase\UseCaseInput\SignInInput;
 use App\Infrastructure\Dao\UserAgeDao;
 use App\UseCase\UseCaseInteractor\SignInInteractor;
+use App\Domain\Port\IUserQuery;
+use App\Adapter\QueryServise\UserQueryServise;
 
 session_start();
 $email = filter_input(INPUT_POST, 'email');
@@ -18,7 +20,8 @@ try {
     $userEmail = new Email($email);
     $inputPassword = new InputPassword($password);
     $useCaseInput = new SignInInput($userEmail, $inputPassword);
-    $useCase = new SignInInteractor($useCaseInput);
+    $queryService = new UserQueryServise();
+    $useCase = new SignInInteractor($useCaseInput, $queryService);
     $userAgeDao = new UserAgeDao();
     $useCaseOutput = $useCase->handler();
 
